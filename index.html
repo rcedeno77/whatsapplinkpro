@@ -239,7 +239,7 @@
                     <i class="fas fa-lock text-5xl text-yellow-500 mb-4"></i>
                     <h3 data-i18n="pay_title" class="text-3xl font-bold mb-3">Activa PRO</h3>
                     <p data-i18n="pay_desc" class="text-gray-300 max-w-md mb-8">Desbloquea enlaces personalizados (wlp.link/alias), UTMs y reportes.</p>
-                    <button onclick="triggerMockPayment()" data-i18n="pay_btn" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 transition-transform">Simular Pago ($3)</button>
+                    <button id="btn-mock-pay" data-i18n="pay_btn" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 transition-transform">Simular Pago ($3)</button>
                 </div>
 
                 <div id="dashboard-content" class="w-full flex flex-col gap-6 transition-all duration-500">
@@ -370,27 +370,38 @@
 
         // --- Country Data & IP Detection ---
         const countries = [
-            {n:"Argentina",c:"54",f:"🇦🇷"}, {n:"Brazil",c:"55",f:"🇧🇷"}, {n:"Canada",c:"1",f:"🇨🇦"}, {n:"Chile",c:"56",f:"🇨🇱"},
+            {n:"Panama",c:"507",f:"🇵🇦"}, {n:"Argentina",c:"54",f:"🇦🇷"}, {n:"Brazil",c:"55",f:"🇧🇷"}, {n:"Canada",c:"1",f:"🇨🇦"}, {n:"Chile",c:"56",f:"🇨🇱"},
             {n:"Colombia",c:"57",f:"🇨🇴"}, {n:"Costa Rica",c:"506",f:"🇨🇷"}, {n:"Ecuador",c:"593",f:"🇪🇨"}, {n:"El Salvador",c:"503",f:"🇸🇻"},
             {n:"Spain",c:"34",f:"🇪🇸"}, {n:"USA",c:"1",f:"🇺🇸"}, {n:"Guatemala",c:"502",f:"🇬🇹"}, {n:"Honduras",c:"504",f:"🇭🇳"},
-            {n:"Mexico",c:"52",f:"🇲🇽"}, {n:"Nicaragua",c:"505",f:"🇳🇮"}, {n:"Panama",c:"507",f:"🇵🇦"}, {n:"Paraguay",c:"595",f:"🇵🇾"},
-            {n:"Peru",c:"51",f:"🇵🇪"}, {n:"Dominican Rep.",c:"1",f:"🇩🇴"}, {n:"Uruguay",c:"598",f:"🇺🇾"}, {n:"Venezuela",c:"58",f:"🇻🇪"}
+            {n:"Mexico",c:"52",f:"🇲🇽"}, {n:"Nicaragua",c:"505",f:"🇳🇮"}, {n:"Paraguay",c:"595",f:"🇵🇾"},
+            {n:"Peru",c:"51",f:"🇵🇪"}, {n:"Dominican Rep.",c:"1",f:"🇩🇴"}, {n:"Uruguay",c:"598",f:"🇺🇾"}, {n:"Venezuela",c:"58",f:"🇻🇪"},
+            {n:"Germany",c:"49",f:"🇩🇪"}, {n:"France",c:"33",f:"🇫🇷"}, {n:"Italy",c:"39",f:"🇮🇹"}, {n:"UK",c:"44",f:"🇬🇧"}, {n:"China",c:"86",f:"🇨🇳"}
         ];
 
         async function detectUserLocation() {
+            const setCountry = (code, name, flag) => {
+                document.getElementById('free-input-code').value = code;
+                document.getElementById('free-country-text').textContent = `${flag} +${code}`;
+                document.getElementById('pro-input-code').value = code;
+                document.getElementById('pro-country-text').textContent = `${flag} +${code}`;
+            };
+            
             try {
                 const res = await fetch('https://ipapi.co/json/');
+                if (!res.ok) throw new Error("API no disponible");
                 const data = await res.json();
+                
                 if (data && data.country_calling_code) {
                     const code = data.country_calling_code.replace('+', '');
                     const country = countries.find(c => c.c === code) || {n: data.country_name, c: code, f: "🌍"};
-                    
-                    document.getElementById('free-input-code').value = country.c;
-                    document.getElementById('free-country-text').textContent = `${country.f} +${country.c}`;
-                    document.getElementById('pro-input-code').value = country.c;
-                    document.getElementById('pro-country-text').textContent = `${country.f} +${country.c}`;
+                    setCountry(country.c, country.n, country.f);
+                } else {
+                    throw new Error("Sin código en respuesta");
                 }
-            } catch (e) { console.log("IP detect failed, default kept."); }
+            } catch (e) { 
+                console.log("IP detect falló, forzando Panamá (+507) como predeterminado.");
+                setCountry("507", "Panama", "🇵🇦");
+            }
         }
 
         function setupCustomSelect(prefix) {
@@ -449,8 +460,12 @@
         };
 
         window.switchView = function(viewName) {
-            ['free', 'auth', 'dashboard', 'checkout'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden-view'));
-            document.getElementById(`view-${viewName}`).classList.remove('hidden-view');
+            ['free', 'auth', 'dashboard'].forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden-view');
+            });
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) target.classList.remove('hidden-view');
         }
 
         function updateNav() {
@@ -474,7 +489,6 @@
         document.getElementById('nav-btn-dash').onclick = () => switchView('dashboard');
         document.getElementById('nav-btn-login').onclick = () => switchView('auth');
         document.getElementById('btn-upsell-trigger').onclick = () => switchView(state.user ? 'dashboard' : 'auth');
-        document.getElementById('btn-checkout-cancel').onclick = () => switchView('dashboard');
 
         // Free Generator
         document.getElementById('form-free-link').onsubmit = (e) => {
@@ -506,7 +520,7 @@
                 loadUserData();
                 if (state.pendingCheckout) {
                     state.pendingCheckout = false;
-                    switchView('checkout');
+                    switchView('dashboard');
                 } else if (!document.getElementById('view-auth').classList.contains('hidden-view')) {
                     switchView('dashboard');
                 }
