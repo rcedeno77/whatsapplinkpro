@@ -207,11 +207,25 @@
                                 <label class="block text-sm font-medium text-gray-300 mb-1">
                                     Número de Teléfono <span class="text-brand-400">*</span>
                                 </label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-phone text-gray-500"></i>
+                                <div class="flex gap-2">
+                                    <select id="free-select-country" class="glass-input px-2 py-3 rounded-xl text-sm w-[110px] shrink-0 cursor-pointer appearance-none bg-black/40">
+                                        <option value="507" selected>🇵🇦 +507</option>
+                                        <option value="57">🇨🇴 +57</option>
+                                        <option value="52">🇲🇽 +52</option>
+                                        <option value="54">🇦🇷 +54</option>
+                                        <option value="56">🇨🇱 +56</option>
+                                        <option value="51">🇵🇪 +51</option>
+                                        <option value="34">🇪🇸 +34</option>
+                                        <option value="1">🇺🇸 +1</option>
+                                        <option value="58">🇻🇪 +58</option>
+                                        <option value="593">🇪🇨 +593</option>
+                                    </select>
+                                    <div class="relative flex-grow">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-phone text-gray-500"></i>
+                                        </div>
+                                        <input type="tel" id="free-input-phone" required class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="Ej: 61234567" pattern="[0-9]{7,15}">
                                     </div>
-                                    <input type="tel" id="free-input-phone" required class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="Ej: 50761234567" pattern="[0-9]{8,15}">
                                 </div>
                             </div>
 
@@ -286,7 +300,8 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
-                            <input type="password" id="register-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="Mínimo 6 caracteres">
+                            <input type="password" id="register-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="••••••••">
+                            <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle"></i> Mínimo 6 caracteres</p>
                         </div>
                         <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl transition-colors mt-6 shadow-lg shadow-brand-500/30">
                             Crear Cuenta
@@ -338,7 +353,21 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-300 mb-1">Teléfono <span class="text-brand-400">*</span></label>
-                                    <input type="tel" id="pro-input-phone" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="Ej: 50761234567" pattern="[0-9]{8,15}">
+                                    <div class="flex gap-2">
+                                        <select id="pro-select-country" class="glass-input px-2 py-3 rounded-xl text-sm w-[110px] shrink-0 cursor-pointer appearance-none bg-black/40">
+                                            <option value="507" selected>🇵🇦 +507</option>
+                                            <option value="57">🇨🇴 +57</option>
+                                            <option value="52">🇲🇽 +52</option>
+                                            <option value="54">🇦🇷 +54</option>
+                                            <option value="56">🇨🇱 +56</option>
+                                            <option value="51">🇵🇪 +51</option>
+                                            <option value="34">🇪🇸 +34</option>
+                                            <option value="1">🇺🇸 +1</option>
+                                            <option value="58">🇻🇪 +58</option>
+                                            <option value="593">🇪🇨 +593</option>
+                                        </select>
+                                        <input type="tel" id="pro-input-phone" required class="w-full glass-input px-4 py-3 rounded-xl text-sm flex-grow" placeholder="Ej: 61234567" pattern="[0-9]{7,15}">
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-300 mb-1">Nombre Campaña (UTM_Campaign)</label>
@@ -484,6 +513,7 @@
             viewDash: document.getElementById('view-dashboard'),
             // Free View Elements
             formFree: document.getElementById('form-free-link'),
+            freeCountry: document.getElementById('free-select-country'),
             freePhone: document.getElementById('free-input-phone'),
             freeMsg: document.getElementById('free-input-msg'),
             freeResult: document.getElementById('free-result-area'),
@@ -499,6 +529,7 @@
             dashPaywall: document.getElementById('dashboard-paywall'),
             dashContent: document.getElementById('dashboard-content'),
             formPro: document.getElementById('form-pro-link'),
+            proCountry: document.getElementById('pro-select-country'),
             proPhone: document.getElementById('pro-input-phone'),
             proMsg: document.getElementById('pro-input-msg'),
             proUtmC: document.getElementById('pro-input-utm-c'),
@@ -574,9 +605,12 @@
         // --- Free Generator Logic ---
         DOM.formFree.addEventListener('submit', (e) => {
             e.preventDefault();
+            const code = DOM.freeCountry.value;
             const phone = DOM.freePhone.value.trim().replace(/\D/g, '');
             const msg = DOM.freeMsg.value.trim();
-            let url = `https://wa.me/${phone}`;
+            const fullPhone = `${code}${phone}`;
+            
+            let url = `https://wa.me/${fullPhone}`;
             if (msg) url += `?text=${encodeURIComponent(msg)}`;
             
             DOM.freeLink.textContent = url;
@@ -627,21 +661,33 @@
         DOM.formLogin.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            try { await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value); } 
-            catch (err) { showToast("Error de credenciales", "error"); }
+            try { 
+                await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value); 
+            } catch (err) { 
+                let msg = "Error al iniciar sesión.";
+                if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') msg = "Credenciales incorrectas.";
+                if (err.code === 'auth/invalid-email') msg = "El correo no es válido.";
+                showToast(msg, "error"); 
+            }
             finally { btn.disabled = false; btn.innerHTML = 'Iniciar Sesión'; }
         });
 
         DOM.formReg.addEventListener('submit', async (e) => {
             e.preventDefault();
             const pass = document.getElementById('register-password').value;
-            if(pass.length < 6) return showToast("Contraseña muy corta", "error");
+            if(pass.length < 6) return showToast("La contraseña debe tener al menos 6 caracteres", "error");
             
             const btn = e.target.querySelector('button'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             try {
                 const cred = await createUserWithEmailAndPassword(auth, document.getElementById('register-email').value, pass);
                 await setDoc(doc(db, 'artifacts', appId, 'users', cred.user.uid, 'profile', 'settings'), { isPremium: false, createdAt: serverTimestamp() });
-            } catch (err) { showToast("Error al registrar", "error"); }
+            } catch (err) { 
+                let msg = "Error al registrar la cuenta.";
+                if (err.code === 'auth/email-already-in-use') msg = "Este correo ya está registrado.";
+                else if (err.code === 'auth/weak-password') msg = "La contraseña es muy débil (mínimo 6 caracteres).";
+                else if (err.code === 'auth/invalid-email') msg = "El formato del correo es inválido.";
+                showToast(msg, "error"); 
+            }
             finally { btn.disabled = false; btn.innerHTML = 'Crear Cuenta'; }
         });
 
@@ -684,11 +730,13 @@
 
             const btn = e.target.querySelector('button'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
+            const code = DOM.proCountry.value;
             const phone = DOM.proPhone.value.trim().replace(/\D/g, '');
             const msg = DOM.proMsg.value.trim();
             const camp = DOM.proUtmC.value.trim();
             const source = DOM.proUtmS.value.trim();
             const medium = DOM.proUtmM.value.trim();
+            const fullPhone = `${code}${phone}`;
 
             let qParams = [];
             if(msg) qParams.push(`text=${encodeURIComponent(msg)}`);
@@ -696,7 +744,7 @@
             if(source) qParams.push(`utm_source=${encodeURIComponent(source)}`);
             if(medium) qParams.push(`utm_medium=${encodeURIComponent(medium)}`);
 
-            const url = qParams.length > 0 ? `https://wa.me/${phone}?${qParams.join('&')}` : `https://wa.me/${phone}`;
+            const url = qParams.length > 0 ? `https://wa.me/${fullPhone}?${qParams.join('&')}` : `https://wa.me/${fullPhone}`;
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'users', state.user.uid, 'links'), {
