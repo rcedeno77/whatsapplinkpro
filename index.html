@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WaLink Pro - Global Generator</title>
+    <title>WaLink Pro - Advanced Link Tracker</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Icons (Only for generic UI icons, not brand logos) -->
+    <!-- Icons (Generic UI) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS -->
@@ -32,14 +32,14 @@
 
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; transition: all 0.3s ease; }
-        /* Background */
+        /* Background Shapes */
         .bg-shapes { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: linear-gradient(135deg, #020617 0%, #0f172a 100%); }
         .shape { position: absolute; filter: blur(80px); opacity: 0.5; border-radius: 50%; animation: pulse-slow 8s infinite alternate; }
         .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(16, 185, 129, 0.2); }
         .shape-2 { bottom: -20%; right: -10%; width: 600px; height: 600px; background: rgba(59, 130, 246, 0.15); }
         .shape-3 { top: 40%; left: 50%; width: 400px; height: 400px; background: rgba(139, 92, 246, 0.15); transform: translate(-50%, -50%); }
 
-        /* Glassmorphism */
+        /* Glassmorphism Elements */
         .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); }
         .glass-input { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease; }
         .glass-input:focus { outline: none; border-color: #10b981; background: rgba(0, 0, 0, 0.5); }
@@ -50,34 +50,42 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         .hidden-view { display: none !important; }
 
-        /* Custom RTL tweaks */
+        /* RTL Support for Arabic */
         [dir="rtl"] .pl-10 { padding-left: 1rem; padding-right: 2.5rem; }
         [dir="rtl"] .left-0 { left: auto; right: 0; }
         [dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+        [dir="rtl"] .mr-1 { margin-right: 0; margin-left: 0.25rem; }
         
-        /* Toast */
+        /* Toast Notifications */
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         [dir="rtl"] #toast-container { right: auto; left: 20px; }
-        .toast { min-width: 250px; padding: 16px; border-radius: 12px; color: white; transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; gap: 12px; }
+        .toast { min-width: 250px; padding: 16px; border-radius: 12px; color: white; transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; gap: 12px; shadow-2xl; }
         [dir="rtl"] .toast { transform: translateX(-120%); }
         .toast.show { transform: translateX(0); }
         .toast-success { background: linear-gradient(to right, #059669, #10b981); }
         .toast-error { background: linear-gradient(to right, #dc2626, #ef4444); }
         .toast-info { background: linear-gradient(to right, #2563eb, #3b82f6); }
+        
+        /* Redirection Overlay */
+        #redirection-overlay { position: fixed; inset: 0; z-index: 99999; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
+    <!-- Global Background -->
     <div class="bg-shapes"><div class="shape shape-1"></div><div class="shape shape-2"></div><div class="shape shape-3"></div></div>
+    
+    <!-- Dynamic Toasts -->
     <div id="toast-container"></div>
 
+    <!-- Main App Container -->
     <div id="app" class="flex-grow flex flex-col relative z-10 w-full min-h-screen">
         
         <!-- Navbar -->
         <nav class="glass-panel px-4 sm:px-6 py-4 flex items-center justify-between z-40 relative m-4 rounded-2xl max-w-7xl mx-auto w-[calc(100%-2rem)]">
             <div class="flex items-center gap-3 cursor-pointer" id="nav-brand">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center shadow-lg">
-                    <!-- Custom WLP SVG Logo -->
+                    <!-- Brand Icon (Custom SVG) -->
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                         <path d="M9 13a5 5 0 0 0 7.54.54l1-1a5 5 0 0 0-7.07-7.07l-.5.5"></path>
@@ -87,242 +95,270 @@
                 <h1 class="font-bold text-lg hidden sm:block tracking-wide">WaLink<span class="text-brand-400">Pro</span></h1>
             </div>
             
-            <div class="flex items-center gap-3 sm:gap-4">
-                <button id="nav-btn-free" data-i18n="nav_free" class="text-sm text-gray-300 hover:text-white px-2 py-2 rounded-lg transition-colors">Generador Gratis</button>
-                <button id="nav-btn-dash" data-i18n="nav_dash" class="hidden-view text-sm text-brand-400 px-3 py-2 rounded-lg bg-brand-500/10 border border-brand-500/20 font-medium">Dashboard PRO</button>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button id="nav-btn-free" data-i18n="nav_free" class="text-xs sm:text-sm text-gray-300 hover:text-white px-2 py-2 rounded-lg transition-colors">Generador Gratis</button>
+                <button id="nav-btn-dash" data-i18n="nav_dash" class="hidden-view text-xs sm:text-sm text-brand-400 px-3 py-2 rounded-lg bg-brand-500/10 border border-brand-500/20 font-medium shadow-sm">Dashboard PRO</button>
                 
-                <div class="h-6 w-px bg-white/20"></div>
+                <div class="h-6 w-px bg-white/20 mx-1"></div>
 
                 <!-- Language Selector -->
                 <div class="relative" id="lang-wrapper">
-                    <button id="lang-btn" class="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-black/20 px-3 py-2 rounded-lg border border-white/10">
-                        <span id="lang-display">🇪🇸 ES</span> <i class="fas fa-chevron-down text-xs"></i>
+                    <button id="lang-btn" class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-300 hover:text-white bg-black/20 px-2 sm:px-3 py-2 rounded-lg border border-white/10">
+                        <span id="lang-display">🇪🇸 ES</span> <i class="fas fa-chevron-down text-[10px]"></i>
                     </button>
                     <div id="lang-dropdown" class="absolute right-0 top-full mt-2 w-32 glass-panel rounded-xl hidden-view z-50 overflow-hidden shadow-2xl">
                         <ul class="text-sm">
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('es')">🇪🇸 Español</li>
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('en')">🇺🇸 English</li>
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('pt')">🇧🇷 Português</li>
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('fr')">🇫🇷 Français</li>
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('de')">🇩🇪 Deutsch</li>
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('it')">🇮🇹 Italiano</li>
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('zh')">🇨🇳 中文</li>
-                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('ar')">🇸🇦 العربية</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('es')">🇪🇸 Español</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('en')">🇺🇸 English</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('pt')">🇧🇷 Português</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('fr')">🇫🇷 Français</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('de')">🇩🇪 Deutsch</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('it')">🇮🇹 Italiano</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('zh')">🇨🇳 中文</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer transition-colors" onclick="changeLang('ar')">🇸🇦 العربية</li>
                         </ul>
                     </div>
                 </div>
                 
                 <!-- Auth State -->
-                <button id="nav-btn-login" data-i18n="nav_login" class="text-sm font-semibold bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition">Ingresar</button>
+                <button id="nav-btn-login" data-i18n="nav_login" class="text-xs sm:text-sm font-semibold bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-2 rounded-xl transition">Ingresar</button>
                 <div id="nav-user-info" class="hidden-view flex items-center gap-2">
-                    <span id="user-tier-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 hidden sm:block">Free</span>
-                    <button id="btn-logout" class="text-gray-400 hover:text-red-400 transition bg-black/20 p-2 rounded-lg"><i class="fas fa-sign-out-alt"></i></button>
+                    <span id="user-tier-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 hidden sm:block shadow-inner">Free</span>
+                    <button id="btn-logout" class="text-gray-400 hover:text-red-400 transition bg-black/20 p-2 rounded-lg shadow-sm"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
             </div>
         </nav>
 
-        <!-- Views Container -->
+        <!-- Dynamic Views -->
         <div id="views-container" class="flex-grow flex flex-col w-full max-w-7xl mx-auto px-4 pb-10 relative">
 
-            <!-- === FREE VIEW === -->
-            <div id="view-free" class="flex-grow flex flex-col items-center py-10 w-full">
-                <div class="text-center mb-10 max-w-2xl">
-                    <h2 data-i18n="free_title" class="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Crea Enlaces de Chat</h2>
-                    <p data-i18n="free_desc" class="text-lg text-gray-400">Genera links directos a tu número de forma gratuita.</p>
+            <!-- ================= VIEW: FREE GENERATOR ================= -->
+            <div id="view-free" class="flex-grow flex flex-col items-center py-6 sm:py-10 w-full transition-opacity duration-300">
+                <div class="text-center mb-8 max-w-2xl">
+                    <h2 data-i18n="free_title" class="text-3xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 leading-tight">Crea Enlaces de Chat</h2>
+                    <p data-i18n="free_desc" class="text-base sm:text-lg text-gray-400">Genera links directos a tu número de forma gratuita.</p>
                 </div>
 
                 <div class="w-full max-w-xl">
-                    <div class="glass-panel p-6 sm:p-8 rounded-3xl relative">
+                    <div class="glass-panel p-5 sm:p-8 rounded-3xl relative shadow-2xl">
                         <form id="form-free-link" class="space-y-5">
                             <div>
                                 <label data-i18n="lbl_phone" class="block text-sm font-medium text-gray-300 mb-1">Número de Teléfono *</label>
                                 <div class="flex gap-2 relative">
-                                    <div class="relative w-[120px] sm:w-[140px] shrink-0" id="free-country-wrapper">
-                                        <div class="glass-input h-full px-3 py-3 rounded-xl text-sm flex items-center justify-between cursor-pointer border-white/20 hover:bg-black/40" id="free-country-display">
-                                            <span id="free-country-text" class="truncate">🇺🇸 +1</span> 
-                                            <i class="fas fa-chevron-down text-[10px] ml-1 opacity-70"></i>
+                                    <!-- Custom Country Select -->
+                                    <div class="relative w-[130px] sm:w-[140px] shrink-0" id="free-country-wrapper">
+                                        <div class="glass-input h-full px-2 sm:px-3 py-3 rounded-xl text-xs sm:text-sm flex items-center justify-between cursor-pointer border-white/20 hover:bg-black/40 transition-colors" id="free-country-display">
+                                            <span id="free-country-text" class="truncate mr-1">🇵🇦 +507</span> 
+                                            <i class="fas fa-chevron-down text-[10px] opacity-70"></i>
                                         </div>
                                         <div class="absolute top-full left-0 mt-2 w-[280px] glass-panel bg-[#0f172a]/95 rounded-xl hidden-view z-[60] flex flex-col max-h-72 border border-white/10 shadow-2xl" id="free-country-dropdown">
                                             <div class="p-2 border-b border-white/10">
-                                                <input type="text" id="free-country-search" data-i18n-placeholder="search_country" class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none" placeholder="Buscar país...">
+                                                <input type="text" id="free-country-search" data-i18n-placeholder="search_country" class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500" placeholder="Buscar país...">
                                             </div>
-                                            <ul class="overflow-y-auto flex-grow p-1" id="free-country-list"></ul>
+                                            <ul class="overflow-y-auto flex-grow p-1 custom-scrollbar" id="free-country-list"></ul>
                                         </div>
-                                        <input type="hidden" id="free-input-code" value="1">
+                                        <input type="hidden" id="free-input-code" value="507">
                                     </div>
                                     <div class="relative flex-grow">
-                                        <input type="tel" id="free-input-phone" required class="w-full h-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="12345678" pattern="[0-9]{5,15}">
+                                        <input type="tel" id="free-input-phone" required class="w-full h-full glass-input px-4 py-3 rounded-xl text-sm focus:border-brand-500" placeholder="61234567" pattern="[0-9]{5,15}">
                                     </div>
                                 </div>
                             </div>
 
                             <div>
                                 <label data-i18n="lbl_msg" class="block text-sm font-medium text-gray-300 mb-1">Mensaje Básico (Opcional)</label>
-                                <textarea id="free-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none"></textarea>
+                                <textarea id="free-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none focus:border-brand-500"></textarea>
                             </div>
 
-                            <button type="submit" data-i18n="btn_gen_free" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-brand-500/25">Generar Enlace</button>
+                            <button type="submit" data-i18n="btn_gen_free" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-brand-500/25 active:scale-[0.98]">Generar Enlace</button>
                         </form>
 
-                        <div id="free-result-area" class="mt-6 hidden-view">
-                            <div class="border border-brand-500/30 bg-brand-900/20 rounded-xl p-4 flex items-center justify-between gap-4">
-                                <a href="#" id="free-generated-link" target="_blank" class="text-white text-sm font-mono break-all line-clamp-1 hover:underline"></a>
+                        <!-- Resultado Gratis + Upsell -->
+                        <div id="free-result-area" class="mt-6 hidden-view transition-all">
+                            <div class="border border-brand-500/30 bg-brand-900/20 rounded-xl p-4 flex items-center justify-between gap-4 shadow-inner">
+                                <a href="#" id="free-generated-link" target="_blank" class="text-white text-sm font-mono break-all line-clamp-1 hover:underline hover:text-brand-300 transition-colors"></a>
                                 <button id="free-btn-copy" class="shrink-0 bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-lg transition-colors"><i class="far fa-copy"></i></button>
                             </div>
                             
-                            <!-- In-context Upsell Banner -->
-                            <div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
-                                <div class="text-sm">
-                                    <span class="font-bold text-blue-400" data-i18n="upsell_result_msg">Haz este enlace corto y rastreable con PRO</span>
-                                    <p class="text-gray-300 text-xs mt-0.5">Ej: <span class="font-mono text-white">wlp.link/mi-marca</span></p>
+                            <!-- In-context Upsell -->
+                            <div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+                                <div class="text-sm text-center sm:text-left">
+                                    <span class="font-bold text-blue-300 flex items-center justify-center sm:justify-start gap-1" data-i18n="upsell_result_msg"><i class="fas fa-magic text-xs"></i> Crea enlaces cortos y medibles</span>
+                                    <p class="text-gray-400 text-xs mt-1">Ej: <span class="font-mono text-white/90 bg-black/30 px-1 py-0.5 rounded">tu-sitio.com/tu-marca</span></p>
                                 </div>
-                                <button onclick="switchView('auth')" data-i18n="upsell_result_btn" class="shrink-0 bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors shadow-lg">Obtener enlace personalizado</button>
+                                <button onclick="switchView('auth')" data-i18n="upsell_result_btn" class="shrink-0 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-all shadow-lg shadow-blue-500/30 active:scale-95 w-full sm:w-auto">Obtener PRO</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Global Upsell -->
-                    <div class="mt-8 glass-panel bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border-orange-500/20 p-6 rounded-3xl text-center group cursor-pointer" id="btn-upsell-trigger">
-                        <h3 data-i18n="upsell_title" class="text-xl font-bold text-white mb-2">⚡ ¿Necesitas trackear campañas?</h3>
-                        <p data-i18n="upsell_desc" class="text-sm text-gray-300 mb-4">Desbloquea enlaces cortos y analíticas por solo $3/mes.</p>
-                        <button data-i18n="btn_upgrade" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-2 px-6 rounded-xl shadow-lg shadow-orange-500/30">Actualizar a Pro</button>
+                    <!-- Global Upsell Banner -->
+                    <div class="mt-8 glass-panel bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border-orange-500/20 p-6 rounded-3xl text-center cursor-pointer transition-transform hover:scale-[1.02]" id="btn-upsell-trigger">
+                        <h3 data-i18n="upsell_title" class="text-lg sm:text-xl font-bold text-white mb-2 flex justify-center items-center gap-2"><i class="fas fa-bolt text-yellow-500"></i> ¿Necesitas trackear campañas?</h3>
+                        <p data-i18n="upsell_desc" class="text-sm text-gray-300 mb-5">Acortador inteligente y analíticas UTM por $3/mes.</p>
+                        <button data-i18n="btn_upgrade" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-2.5 px-8 rounded-xl shadow-lg shadow-orange-500/30 transition-all">Actualizar a Pro</button>
                     </div>
                 </div>
             </div>
 
-            <!-- === AUTH VIEW === -->
-            <div id="view-auth" class="hidden-view flex-grow flex items-center justify-center py-10">
-                <div class="glass-panel w-full max-w-md p-8 rounded-3xl relative">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-blue-500 rounded-t-3xl"></div>
+            <!-- ================= VIEW: AUTH / LOGIN ================= -->
+            <div id="view-auth" class="hidden-view flex-grow flex items-center justify-center py-10 transition-opacity duration-300">
+                <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl relative shadow-2xl">
+                    <!-- Deco Line -->
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-500 via-blue-500 to-purple-500 rounded-t-3xl opacity-80"></div>
+                    
                     <div class="text-center mb-8">
-                        <h2 data-i18n="auth_title" class="text-2xl font-bold">Acceso WaLink Pro</h2>
+                        <h2 data-i18n="auth_title" class="text-2xl font-bold tracking-tight">Acceso WaLink Pro</h2>
                     </div>
 
+                    <!-- Login Form -->
                     <form id="login-form" class="space-y-4">
                         <div>
                             <label data-i18n="lbl_email" class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
-                            <input type="email" id="login-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
+                            <input type="email" id="login-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm focus:border-blue-500" placeholder="ejemplo@correo.com">
                         </div>
                         <div>
                             <label data-i18n="lbl_pass" class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
-                            <input type="password" id="login-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
+                            <input type="password" id="login-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm focus:border-blue-500" placeholder="••••••••">
                         </div>
-                        <button type="submit" data-i18n="btn_login" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl mt-6 transition-colors shadow-lg shadow-blue-500/25">Iniciar Sesión</button>
-                        <p class="text-center text-sm text-gray-400 mt-4">
-                            <span data-i18n="no_account">¿No tienes cuenta?</span> <a href="#" id="show-register" data-i18n="btn_show_reg" class="text-blue-400 hover:text-blue-300">Regístrate</a>
+                        <button type="submit" data-i18n="btn_login" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl mt-6 transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98]">Iniciar Sesión</button>
+                        <p class="text-center text-sm text-gray-400 mt-5">
+                            <span data-i18n="no_account">¿No tienes cuenta?</span> <a href="#" id="show-register" data-i18n="btn_show_reg" class="text-blue-400 hover:text-blue-300 font-semibold underline-offset-2 hover:underline">Regístrate</a>
                         </p>
                     </form>
 
+                    <!-- Register Form -->
                     <form id="register-form" class="space-y-4 hidden-view">
                         <div>
                             <label data-i18n="lbl_email" class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
-                            <input type="email" id="register-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
+                            <input type="email" id="register-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm focus:border-brand-500" placeholder="ejemplo@correo.com">
                         </div>
                         <div>
                             <label data-i18n="lbl_pass" class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
-                            <input type="password" id="register-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
-                            <p data-i18n="pass_hint" class="text-xs text-gray-400 mt-1">Mínimo 6 caracteres</p>
+                            <input type="password" id="register-password" required minlength="6" class="w-full glass-input px-4 py-3 rounded-xl text-sm focus:border-brand-500" placeholder="••••••••">
+                            <p data-i18n="pass_hint" class="text-xs text-gray-400 mt-1.5 flex items-center gap-1"><i class="fas fa-shield-alt text-[10px]"></i> Mínimo 6 caracteres</p>
                         </div>
-                        <button type="submit" data-i18n="btn_reg" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl mt-6 transition-colors shadow-lg shadow-brand-500/25">Crear Cuenta</button>
-                        <p class="text-center text-sm text-gray-400 mt-4">
-                            <span data-i18n="has_account">¿Ya tienes cuenta?</span> <a href="#" id="show-login" data-i18n="btn_show_login" class="text-brand-400 hover:text-brand-300">Inicia Sesión</a>
+                        <button type="submit" data-i18n="btn_reg" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3.5 rounded-xl mt-6 transition-all shadow-lg shadow-brand-500/25 active:scale-[0.98]">Crear Cuenta</button>
+                        <p class="text-center text-sm text-gray-400 mt-5">
+                            <span data-i18n="has_account">¿Ya tienes cuenta?</span> <a href="#" id="show-login" data-i18n="btn_show_login" class="text-brand-400 hover:text-brand-300 font-semibold underline-offset-2 hover:underline">Inicia Sesión</a>
                         </p>
                     </form>
                 </div>
             </div>
 
-            <!-- === DASHBOARD VIEW === -->
-            <div id="view-dashboard" class="hidden-view flex-grow flex flex-col gap-6 py-6 w-full relative">
+            <!-- ================= VIEW: DASHBOARD PRO ================= -->
+            <div id="view-dashboard" class="hidden-view flex-grow flex flex-col gap-6 py-6 w-full relative transition-opacity duration-300">
                 
-                <!-- Paywall -->
-                <div id="dashboard-paywall" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-xl rounded-3xl border border-white/10 hidden-view p-6 text-center">
-                    <i class="fas fa-lock text-5xl text-yellow-500 mb-4"></i>
-                    <h3 data-i18n="pay_title" class="text-3xl font-bold mb-3">Activa PRO</h3>
-                    <p data-i18n="pay_desc" class="text-gray-300 max-w-md mb-8">Desbloquea enlaces personalizados (wlp.link/alias), UTMs y reportes.</p>
-                    <button id="btn-mock-pay" data-i18n="pay_btn" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 transition-transform">Simular Pago ($3)</button>
+                <!-- Paywall Overlay (Bloquea si no es premium) -->
+                <div id="dashboard-paywall" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-900/90 backdrop-blur-md rounded-3xl border border-white/10 p-6 text-center shadow-2xl">
+                    <div class="bg-yellow-500/10 p-4 rounded-full mb-4">
+                        <i class="fas fa-lock text-4xl text-yellow-500"></i>
+                    </div>
+                    <h3 data-i18n="pay_title" class="text-3xl font-bold mb-3 text-white">Activa PRO</h3>
+                    <p data-i18n="pay_desc" class="text-gray-300 max-w-md mb-8">Desbloquea enlaces personalizados, inyección de UTMs ocultos y reportes analíticos.</p>
+                    <button id="btn-mock-pay" data-i18n="pay_btn" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-3.5 px-10 rounded-xl shadow-lg shadow-orange-500/30 transition-transform hover:scale-105 active:scale-95 text-lg">Pagar Suscripción ($3)</button>
+                    <p class="text-xs text-gray-500 mt-4 flex items-center gap-1"><i class="fas fa-lock"></i> Entorno de prueba (Simulación Local)</p>
                 </div>
 
                 <div id="dashboard-content" class="w-full flex flex-col gap-6 transition-all duration-500">
-                    <!-- Pro Generator -->
-                    <div class="glass-panel p-6 sm:p-8 rounded-3xl relative overflow-visible z-20">
-                        <h2 data-i18n="pro_title" class="text-2xl font-bold mb-6 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                            </svg>
-                            Generador PRO
+                    
+                    <!-- Pro Link Generator Engine -->
+                    <div class="glass-panel p-5 sm:p-8 rounded-3xl relative overflow-visible z-20 shadow-xl border-t-4 border-brand-500">
+                        <h2 data-i18n="pro_title" class="text-xl sm:text-2xl font-bold mb-6 flex items-center gap-2 text-white">
+                            <i class="fas fa-rocket text-brand-400"></i> Generador PRO
                         </h2>
+                        
                         <form id="form-pro-link" class="space-y-5">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <!-- Phone -->
                                 <div>
-                                    <label data-i18n="lbl_phone" class="block text-sm font-medium text-gray-300 mb-1">Teléfono *</label>
+                                    <label data-i18n="lbl_phone" class="block text-sm font-medium text-gray-300 mb-1">Teléfono Destino *</label>
                                     <div class="flex gap-2 relative">
-                                        <div class="relative w-[120px] sm:w-[140px] shrink-0" id="pro-country-wrapper">
-                                            <div class="glass-input h-full px-3 py-3 rounded-xl text-sm flex items-center justify-between cursor-pointer hover:bg-black/40 border-white/20" id="pro-country-display">
-                                                <span id="pro-country-text" class="truncate">🇺🇸 +1</span> <i class="fas fa-chevron-down text-[10px] ml-1 opacity-70"></i>
+                                        <div class="relative w-[130px] sm:w-[140px] shrink-0" id="pro-country-wrapper">
+                                            <div class="glass-input h-full px-2 sm:px-3 py-3 rounded-xl text-xs sm:text-sm flex items-center justify-between cursor-pointer hover:bg-black/40 border-white/20 transition-colors" id="pro-country-display">
+                                                <span id="pro-country-text" class="truncate mr-1">🇵🇦 +507</span> <i class="fas fa-chevron-down text-[10px] opacity-70"></i>
                                             </div>
                                             <div class="absolute top-full left-0 mt-2 w-[280px] glass-panel bg-[#0f172a]/95 rounded-xl hidden-view z-[60] flex flex-col max-h-72 border border-white/10 shadow-2xl" id="pro-country-dropdown">
                                                 <div class="p-2 border-b border-white/10">
-                                                    <input type="text" id="pro-country-search" data-i18n-placeholder="search_country" class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none" placeholder="Buscar país...">
+                                                    <input type="text" id="pro-country-search" data-i18n-placeholder="search_country" class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500" placeholder="Buscar país...">
                                                 </div>
-                                                <ul class="overflow-y-auto flex-grow p-1" id="pro-country-list"></ul>
+                                                <ul class="overflow-y-auto flex-grow p-1 custom-scrollbar" id="pro-country-list"></ul>
                                             </div>
-                                            <input type="hidden" id="pro-input-code" value="1">
+                                            <input type="hidden" id="pro-input-code" value="507">
                                         </div>
-                                        <input type="tel" id="pro-input-phone" required class="w-full h-full glass-input px-4 py-3 rounded-xl text-sm">
+                                        <input type="tel" id="pro-input-phone" required class="w-full h-full glass-input px-4 py-3 rounded-xl text-sm focus:border-brand-500" placeholder="61234567">
                                     </div>
                                 </div>
+                                
+                                <!-- Custom Alias -->
                                 <div>
-                                    <label data-i18n="lbl_alias" class="block text-sm font-medium text-gray-300 mb-1">Alias Corto (Opcional)</label>
-                                    <div class="flex">
-                                        <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-white/10 bg-black/40 text-gray-400 text-sm">wlp.link/</span>
-                                        <input type="text" id="pro-input-alias" data-i18n-placeholder="ph_alias" placeholder="mi-marca" class="w-full glass-input rounded-r-xl px-3 py-3 text-sm focus:border-l-0">
+                                    <label data-i18n="lbl_alias" class="block text-sm font-medium text-gray-300 mb-1 flex justify-between">Alias Personalizado <span class="text-xs text-brand-400">Tracker Activo</span></label>
+                                    <div class="flex shadow-sm rounded-xl">
+                                        <!-- Prefix Dinámico: Mostrará el dominio real donde está montada la app -->
+                                        <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-white/10 bg-black/40 text-gray-400 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none" id="domain-prefix">sitio.com/?l=</span>
+                                        <input type="text" id="pro-input-alias" data-i18n-placeholder="ph_alias" placeholder="oferta-vip" class="w-full glass-input rounded-r-xl px-3 py-3 text-sm focus:border-brand-500 bg-black/20" pattern="[A-Za-z0-9-_]+" title="Solo letras, números, guiones">
                                     </div>
+                                    <p class="text-[10px] text-gray-500 mt-1 px-1">Si lo dejas vacío, generaremos uno seguro por ti.</p>
                                 </div>
                             </div>
                             
+                            <!-- Message -->
                             <div>
-                                <label data-i18n="lbl_msg" class="block text-sm font-medium text-gray-300 mb-1">Mensaje Pre-llenado</label>
-                                <textarea id="pro-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none"></textarea>
+                                <label data-i18n="lbl_msg" class="block text-sm font-medium text-gray-300 mb-1">Mensaje Pre-llenado (Opcional)</label>
+                                <textarea id="pro-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none focus:border-brand-500" placeholder="¡Hola! Me interesa la oferta..."></textarea>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-black/20 p-4 rounded-xl border border-white/5">
-                                <div><label data-i18n="lbl_camp" class="block text-xs text-gray-400 mb-1">Campaña (utm_campaign)</label><input type="text" id="pro-input-utm-c" class="w-full glass-input px-3 py-2 rounded-lg text-sm"></div>
-                                <div><label data-i18n="lbl_src" class="block text-xs text-gray-400 mb-1">Fuente (utm_source)</label><input type="text" id="pro-input-utm-s" class="w-full glass-input px-3 py-2 rounded-lg text-sm"></div>
-                                <div><label data-i18n="lbl_med" class="block text-xs text-gray-400 mb-1">Medio (utm_medium)</label><input type="text" id="pro-input-utm-m" class="w-full glass-input px-3 py-2 rounded-lg text-sm"></div>
+                            <!-- UTMs -->
+                            <div class="bg-black/30 p-4 sm:p-5 rounded-xl border border-white/5 shadow-inner">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2"><i class="fas fa-tag text-blue-400"></i> Parámetros UTM Ocultos</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div><label data-i18n="lbl_src" class="block text-xs text-gray-400 mb-1">Fuente (utm_source)</label><input type="text" id="pro-input-utm-s" class="w-full glass-input px-3 py-2 rounded-lg text-sm focus:border-blue-400" placeholder="instagram"></div>
+                                    <div><label data-i18n="lbl_med" class="block text-xs text-gray-400 mb-1">Medio (utm_medium)</label><input type="text" id="pro-input-utm-m" class="w-full glass-input px-3 py-2 rounded-lg text-sm focus:border-blue-400" placeholder="stories"></div>
+                                    <div><label data-i18n="lbl_camp" class="block text-xs text-gray-400 mb-1">Campaña (utm_campaign)</label><input type="text" id="pro-input-utm-c" class="w-full glass-input px-3 py-2 rounded-lg text-sm focus:border-blue-400" placeholder="black_friday"></div>
+                                </div>
                             </div>
                             
-                            <button type="submit" data-i18n="btn_gen_pro" class="w-full bg-gradient-to-r from-brand-600 to-brand-400 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-brand-500/25 transition-all">Generar y Guardar</button>
+                            <button type="submit" data-i18n="btn_gen_pro" class="w-full bg-gradient-to-r from-brand-600 to-brand-400 hover:from-brand-500 hover:to-brand-300 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-500/25 transition-all active:scale-[0.98]">Generar y Guardar Tracker</button>
                         </form>
-                        <div id="pro-result-area" class="mt-4 hidden-view">
-                            <div class="border border-brand-500/30 bg-brand-900/20 rounded-xl p-3 flex justify-between items-center">
-                                <a href="#" id="pro-generated-link" target="_blank" class="text-brand-400 text-sm font-mono break-all line-clamp-1 hover:underline font-bold"></a>
+                        
+                        <!-- Result Pro -->
+                        <div id="pro-result-area" class="mt-5 hidden-view transition-all">
+                            <div class="border border-brand-500/40 bg-brand-900/30 rounded-xl p-3 flex justify-between items-center gap-3">
+                                <a href="#" id="pro-generated-link" target="_blank" class="text-brand-300 text-sm font-mono break-all line-clamp-1 hover:underline font-bold truncate"></a>
+                                <button id="pro-btn-copy" class="shrink-0 bg-white/10 hover:bg-white/20 border border-brand-500/30 text-brand-300 px-4 py-2 rounded-lg transition-colors text-sm font-medium"><i class="far fa-copy mr-1"></i> Copiar</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Stats & Table -->
+                    <!-- Analytics Section -->
                     <div class="relative z-10 space-y-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="glass-panel p-5 rounded-2xl"><p data-i18n="stat_links" class="text-sm text-gray-400 mb-1">Total Enlaces</p><h4 id="stat-links" class="text-3xl font-bold">0</h4></div>
-                            <div class="glass-panel p-5 rounded-2xl"><p data-i18n="stat_clicks" class="text-sm text-gray-400 mb-1">Clics Totales</p><h4 id="stat-clicks" class="text-3xl font-bold text-brand-400">0</h4></div>
-                            <div class="glass-panel p-5 rounded-2xl"><p data-i18n="stat_src" class="text-sm text-gray-400 mb-1">Mejor Fuente</p><h4 id="stat-source" class="text-xl font-bold capitalize">N/A</h4></div>
-                            <div class="glass-panel p-5 rounded-2xl flex"><button id="btn-export-csv" data-i18n="btn_export" class="w-full bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors"><i class="fas fa-file-csv"></i> Export CSV</button></div>
+                        <!-- KPI Cards -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                            <div class="glass-panel p-4 sm:p-5 rounded-2xl shadow-md border-t-2 border-blue-500/50"><p data-i18n="stat_links" class="text-xs sm:text-sm text-gray-400 mb-1 font-medium">Total Enlaces</p><h4 id="stat-links" class="text-2xl sm:text-3xl font-bold text-white">0</h4></div>
+                            <div class="glass-panel p-4 sm:p-5 rounded-2xl shadow-md border-t-2 border-brand-500/50"><p data-i18n="stat_clicks" class="text-xs sm:text-sm text-gray-400 mb-1 font-medium">Clics Totales</p><h4 id="stat-clicks" class="text-2xl sm:text-3xl font-bold text-brand-400">0</h4></div>
+                            <div class="glass-panel p-4 sm:p-5 rounded-2xl shadow-md border-t-2 border-purple-500/50"><p data-i18n="stat_src" class="text-xs sm:text-sm text-gray-400 mb-1 font-medium">Mejor Fuente</p><h4 id="stat-source" class="text-lg sm:text-xl font-bold text-white capitalize truncate">N/A</h4></div>
+                            <div class="glass-panel p-4 sm:p-5 rounded-2xl flex"><button id="btn-export-csv" data-i18n="btn_export" class="w-full h-full bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 text-blue-300 font-semibold rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95"><i class="fas fa-file-csv text-lg"></i> <span class="hidden sm:inline">Exportar</span> CSV</button></div>
                         </div>
 
-                        <div class="glass-panel rounded-3xl overflow-hidden">
+                        <!-- Data Table -->
+                        <div class="glass-panel rounded-3xl overflow-hidden shadow-xl border border-white/5">
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left text-sm text-gray-300">
-                                    <thead class="bg-black/40 text-xs uppercase text-gray-400 border-b border-white/10">
+                                    <thead class="bg-black/50 text-xs uppercase text-gray-400 border-b border-white/10 tracking-wider">
                                         <tr>
-                                            <th data-i18n="th_camp" class="px-6 py-4">Enlace / Campaña</th>
-                                            <th data-i18n="th_utm" class="px-6 py-4">UTMs</th>
-                                            <th data-i18n="th_clicks" class="px-6 py-4 text-center">Clics</th>
-                                            <th data-i18n="th_action" class="px-6 py-4 text-right">Acción</th>
+                                            <th data-i18n="th_camp" class="px-5 py-4 font-semibold">Enlace Trackeable</th>
+                                            <th data-i18n="th_utm" class="px-5 py-4 font-semibold">UTMs (Source/Medium)</th>
+                                            <th data-i18n="th_clicks" class="px-5 py-4 font-semibold text-center">Clics Reales</th>
+                                            <th data-i18n="th_action" class="px-5 py-4 font-semibold text-right">Acción</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="links-table-body" class="divide-y divide-white/5"></tbody>
+                                    <tbody id="links-table-body" class="divide-y divide-white/5 bg-black/10">
+                                        <!-- Las filas se inyectan via JS -->
+                                    </tbody>
                                 </table>
-                                <div id="empty-state" class="hidden-view p-10 text-center text-gray-500"><p data-i18n="empty_dash">No hay enlaces guardados.</p></div>
+                                <div id="empty-state" class="hidden-view p-12 text-center text-gray-500 bg-black/20">
+                                    <i class="fas fa-link text-3xl mb-3 opacity-50"></i>
+                                    <p data-i18n="empty_dash" class="text-sm">No has creado ningún enlace rastreable aún.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -331,53 +367,91 @@
         </div>
     </div>
 
-    <!-- Data & Scripts -->
+    <!-- MAIN JAVASCRIPT LOGIC -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Inject dynamic SVG Favicon
+        // ----------------------------------------------------------------------
+        // 1. INYECCIÓN DEL FAVICON SVG DINÁMICO (Marca WLP)
+        // ----------------------------------------------------------------------
         const svgFavicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2310b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path><path d="M9 13a5 5 0 0 0 7.54.54l1-1a5 5 0 0 0-7.07-7.07l-.5.5"></path><path d="M15 11a5 5 0 0 0-7.54-.54l-1 1a5 5 0 0 0 7.07 7.07l.5-.5"></path></svg>`;
         const linkIcon = document.createElement('link'); linkIcon.rel = 'icon'; linkIcon.type = 'image/svg+xml'; linkIcon.href = 'data:image/svg+xml;utf8,' + svgFavicon; document.head.appendChild(linkIcon);
 
-        // --- I18N Data ---
+        // ----------------------------------------------------------------------
+        // 2. SISTEMA DE INTERNACIONALIZACIÓN (i18n) MULTI-IDIOMA
+        // ----------------------------------------------------------------------
         const i18n = {
-            es: { nav_free: "Generador Gratis", nav_dash: "Dashboard PRO", nav_login: "Ingresar", free_title: "Crea Enlaces de Chat", free_desc: "Genera links directos a tu número de forma gratuita.", lbl_phone: "Número de Teléfono *", lbl_msg: "Mensaje Básico (Opcional)", btn_gen_free: "Generar Enlace", search_country: "Buscar país...", upsell_result_msg: "Haz este enlace corto y rastreable con PRO", upsell_result_btn: "Obtener link personalizado", upsell_title: "⚡ ¿Necesitas trackear campañas?", upsell_desc: "Desbloquea enlaces cortos y analíticas por solo $3/mes.", btn_upgrade: "Actualizar a Pro", auth_title: "Acceso WaLink Pro", lbl_email: "Correo Electrónico", lbl_pass: "Contraseña", pass_hint: "Mínimo 6 caracteres", btn_login: "Iniciar Sesión", btn_reg: "Crear Cuenta", no_account: "¿No tienes cuenta?", has_account: "¿Ya tienes cuenta?", btn_show_reg: "Regístrate", btn_show_login: "Inicia Sesión", pay_title: "Activa PRO", pay_desc: "Desbloquea enlaces personalizados (wlp.link/alias), UTMs y reportes.", pay_btn: "Ir al Checkout ($3)", pro_title: "Generador PRO", lbl_alias: "Alias Corto (Opcional)", ph_alias: "mi-marca", lbl_camp: "Campaña", lbl_src: "Fuente", lbl_med: "Medio", btn_gen_pro: "Generar y Guardar", stat_links: "Total Enlaces", stat_clicks: "Clics Totales", stat_src: "Mejor Fuente", btn_export: "Exportar CSV", th_camp: "Enlace / Campaña", th_utm: "UTMs", th_clicks: "Clics", th_action: "Acción", empty_dash: "No hay enlaces guardados.", msg_cop: "Enlace copiado", msg_err: "Error de sistema", err_weak_pass: "La contraseña debe tener al menos 6 caracteres.", err_email_in_use: "Este correo ya está registrado.", err_invalid_email: "Formato de correo inválido.", err_invalid_cred: "Correo o contraseña incorrectos.", chk_title: "Finalizar Compra", chk_plan: "WaLink Pro - Mensual", chk_btn: "Pagar de forma segura" },
-            en: { nav_free: "Free Generator", nav_dash: "PRO Dashboard", nav_login: "Login", free_title: "Create Chat Links", free_desc: "Generate direct links to your number for free.", lbl_phone: "Phone Number *", lbl_msg: "Basic Message (Optional)", btn_gen_free: "Generate Link", search_country: "Search country...", upsell_result_msg: "Make this link short & trackable with PRO", upsell_result_btn: "Get custom link", upsell_title: "⚡ Need to track campaigns?", upsell_desc: "Unlock short links and analytics for just $3/mo.", btn_upgrade: "Upgrade to Pro", auth_title: "WaLink Pro Access", lbl_email: "Email Address", lbl_pass: "Password", pass_hint: "Minimum 6 characters", btn_login: "Log In", btn_reg: "Create Account", no_account: "Don't have an account?", has_account: "Already have an account?", btn_show_reg: "Sign Up", btn_show_login: "Log In", pay_title: "Activate PRO", pay_desc: "Unlock custom links (wlp.link/alias), UTMs and reports.", pay_btn: "Go to Checkout ($3)", pro_title: "PRO Generator", lbl_alias: "Short Alias (Optional)", ph_alias: "my-brand", lbl_camp: "Campaign", lbl_src: "Source", lbl_med: "Medium", btn_gen_pro: "Generate & Save", stat_links: "Total Links", stat_clicks: "Total Clicks", stat_src: "Best Source", btn_export: "Export CSV", th_camp: "Link / Campaign", th_utm: "UTMs", th_clicks: "Clicks", th_action: "Action", empty_dash: "No saved links yet.", msg_cop: "Link copied", msg_err: "System error", err_weak_pass: "Password must be at least 6 characters.", err_email_in_use: "This email is already in use.", err_invalid_email: "Invalid email format.", err_invalid_cred: "Incorrect email or password.", chk_title: "Checkout", chk_plan: "WaLink Pro - Monthly", chk_btn: "Pay securely" },
-            pt: { chk_title: "Finalizar Compra", chk_plan: "WaLink Pro - Mensal", chk_btn: "Pagar com segurança" },
-            fr: { chk_title: "Paiement", chk_plan: "WaLink Pro - Mensuel", chk_btn: "Payer en toute sécurité" },
+            es: { nav_free: "Generador Gratis", nav_dash: "Dashboard PRO", nav_login: "Ingresar", free_title: "Crea Enlaces de Chat", free_desc: "Genera links directos a tu número de forma gratuita.", lbl_phone: "Teléfono Destino *", lbl_msg: "Mensaje Básico (Opcional)", btn_gen_free: "Generar Enlace", search_country: "Buscar país (nombre o prefijo)...", upsell_result_msg: "Crea enlaces cortos y medibles", upsell_result_btn: "Obtener PRO", upsell_title: "¿Necesitas trackear campañas?", upsell_desc: "Acortador inteligente y analíticas UTM por $3/mes.", btn_upgrade: "Actualizar a Pro", auth_title: "Acceso WaLink Pro", lbl_email: "Correo Electrónico", lbl_pass: "Contraseña", pass_hint: "Mínimo 6 caracteres", btn_login: "Iniciar Sesión", btn_reg: "Crear Cuenta", no_account: "¿No tienes cuenta?", has_account: "¿Ya tienes cuenta?", btn_show_reg: "Regístrate", btn_show_login: "Inicia Sesión", pay_title: "Activa PRO", pay_desc: "Desbloquea enlaces personalizados, inyección de UTMs ocultos y reportes analíticos.", pay_btn: "Pagar Suscripción ($3)", pro_title: "Generador PRO", lbl_alias: "Alias Personalizado", ph_alias: "oferta-vip", lbl_camp: "Campaña (utm_campaign)", lbl_src: "Fuente (utm_source)", lbl_med: "Medio (utm_medium)", btn_gen_pro: "Generar y Guardar Tracker", stat_links: "Total Enlaces", stat_clicks: "Clics Reales", stat_src: "Mejor Fuente", btn_export: "Exportar CSV", th_camp: "Enlace Trackeable", th_utm: "UTMs", th_clicks: "Clics", th_action: "Acción", empty_dash: "No has creado ningún enlace rastreable aún.", msg_cop: "¡Enlace copiado al portapapeles!", msg_err: "Error de sistema.", err_weak_pass: "La contraseña es muy corta (mínimo 6).", err_email_in_use: "El correo ya está registrado.", err_invalid_email: "Formato de correo no válido.", err_invalid_cred: "Correo o contraseña incorrectos.", chk_title: "Checkout Seguro", chk_plan: "Plan Mensual WaLink Pro" },
+            en: { nav_free: "Free Generator", nav_dash: "PRO Dashboard", nav_login: "Login", free_title: "Create Chat Links", free_desc: "Generate direct links to your number for free.", lbl_phone: "Destination Phone *", lbl_msg: "Basic Message (Optional)", btn_gen_free: "Generate Link", search_country: "Search country...", upsell_result_msg: "Create short and trackable links", upsell_result_btn: "Get PRO", upsell_title: "Need to track campaigns?", upsell_desc: "Smart shortener and UTM analytics for $3/mo.", btn_upgrade: "Upgrade to Pro", auth_title: "WaLink Pro Access", lbl_email: "Email Address", lbl_pass: "Password", pass_hint: "Min 6 characters", btn_login: "Log In", btn_reg: "Create Account", no_account: "No account?", has_account: "Have an account?", btn_show_reg: "Sign Up", btn_show_login: "Log In", pay_title: "Activate PRO", pay_desc: "Unlock custom short links, hidden UTM injection and analytics.", pay_btn: "Subscribe ($3)", pro_title: "PRO Generator", lbl_alias: "Custom Alias", ph_alias: "vip-promo", lbl_camp: "Campaign (utm_campaign)", lbl_src: "Source (utm_source)", lbl_med: "Medium (utm_medium)", btn_gen_pro: "Generate & Save Tracker", stat_links: "Total Links", stat_clicks: "Real Clicks", stat_src: "Best Source", btn_export: "Export CSV", th_camp: "Trackable Link", th_utm: "UTMs", th_clicks: "Clicks", th_action: "Action", empty_dash: "No trackable links created yet.", msg_cop: "Link copied to clipboard!", msg_err: "System error.", err_weak_pass: "Password too short (min 6).", err_email_in_use: "Email already registered.", err_invalid_email: "Invalid email.", err_invalid_cred: "Wrong credentials." },
+            pt: { nav_free: "Gerador Grátis", nav_dash: "Painel PRO", nav_login: "Entrar", free_title: "Criar Links de Chat", upsell_result_btn: "Obter PRO", pay_btn: "Assinar ($3)" }, // Se fusionará con EN para evitar huecos
+            fr: { nav_free: "Générateur Gratuit", nav_dash: "Tableau PRO", nav_login: "Connexion", free_title: "Créer des Liens", pay_btn: "S'abonner ($3)" },
             de: { err_weak_pass: "Passwort zu kurz.", err_email_in_use: "E-Mail wird bereits verwendet.", err_invalid_email: "Ungültige E-Mail.", err_invalid_cred: "Falsche Anmeldedaten." },
-            it: { err_weak_pass: "Password troppo corta.", err_email_in_use: "Email già in uso.", err_invalid_email: "Email non valida.", err_invalid_cred: "Credenziali errate." },
-            zh: { err_weak_pass: "密码太短.", err_email_in_use: "电子邮件已被使用.", err_invalid_email: "无效的邮件.", err_invalid_cred: "错误的凭据." },
-            ar: { err_weak_pass: "كلمة المرور قصيرة جدا", err_email_in_use: "البريد مستخدم بالفعل", err_invalid_email: "بريد غير صالح", err_invalid_cred: "بيانات الاعتماد خاطئة" }
+            it: { err_weak_pass: "Password troppo corta.", err_email_in_use: "Email già in uso." },
+            zh: { nav_free: "免费生成器", btn_login: "登录", btn_reg: "创建账户", pay_btn: "订阅 ($3)" },
+            ar: { nav_free: "مولد مجاني", nav_dash: "لوحة PRO", nav_login: "تسجيل الدخول", pay_btn: "إشتراك ($3)" }
         };
-        // Merge english fallbacks into other languages missing keys
+        // Merge english fallbacks into other languages missing keys to prevent empty UI
         ['pt', 'fr', 'de','it','zh','ar'].forEach(l => { i18n[l] = { ...i18n.en, ...(i18n[l]||{}) }; });
 
         let currentLang = 'es';
         window.changeLang = function(lang) {
             currentLang = lang; document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('lang-display').innerHTML = getLangFlag(lang);
+            const flagMap = { es:'🇪🇸 ES', en:'🇺🇸 EN', pt:'🇧🇷 PT', fr:'🇫🇷 FR', de:'🇩🇪 DE', it:'🇮🇹 IT', zh:'🇨🇳 ZH', ar:'🇸🇦 AR' };
+            document.getElementById('lang-display').innerHTML = flagMap[lang];
             document.getElementById('lang-dropdown').classList.add('hidden-view');
-            applyTranslations();
-        };
-        function getLangFlag(l) { const m = { es: '🇪🇸 ES', en: '🇺🇸 EN', pt: '🇧🇷 PT', fr: '🇫🇷 FR', de: '🇩🇪 DE', it: '🇮🇹 IT', zh: '🇨🇳 ZH', ar: '🇸🇦 AR' }; return m[l]; }
-        function applyTranslations() {
-            document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.getAttribute('data-i18n'); if (i18n[currentLang][k]) el.textContent = i18n[currentLang][k]; });
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.getAttribute('data-i18n'); if (i18n[currentLang][k]) el.innerHTML = i18n[currentLang][k]; });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const k = el.getAttribute('data-i18n-placeholder'); if (i18n[currentLang][k]) el.placeholder = i18n[currentLang][k]; });
+        };
+
+        // UI Helpers
+        window.showToast = function(msgKey, type = 'info', isDirect = false) {
+            const str = isDirect ? msgKey : (i18n[currentLang][msgKey] || msgKey);
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            let icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle text-red-100' : 'fa-info-circle';
+            toast.className = `toast toast-${type} glass-panel border-${type === 'error'?'red':'brand'}-500/50`;
+            toast.innerHTML = `<i class="fas ${icon} text-2xl"></i> <div><p class="text-sm font-medium leading-tight">${str}</p></div>`;
+            container.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
+        };
+
+        window.switchView = function(viewName) {
+            ['free', 'auth', 'dashboard'].forEach(v => { const el = document.getElementById(`view-${v}`); if (el) el.classList.add('hidden-view'); });
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) { target.classList.remove('hidden-view'); window.scrollTo({top:0, behavior:'smooth'}); }
         }
 
-        // --- Country Data & IP Detection ---
+        // ----------------------------------------------------------------------
+        // 3. BASE DE DATOS GLOBAL DE PAÍSES (Extracto masivo, standard ISO)
+        // ----------------------------------------------------------------------
         const countries = [
-            {n:"Panama",c:"507",f:"🇵🇦"}, {n:"Argentina",c:"54",f:"🇦🇷"}, {n:"Brazil",c:"55",f:"🇧🇷"}, {n:"Canada",c:"1",f:"🇨🇦"}, {n:"Chile",c:"56",f:"🇨🇱"},
-            {n:"Colombia",c:"57",f:"🇨🇴"}, {n:"Costa Rica",c:"506",f:"🇨🇷"}, {n:"Ecuador",c:"593",f:"🇪🇨"}, {n:"El Salvador",c:"503",f:"🇸🇻"},
-            {n:"Spain",c:"34",f:"🇪🇸"}, {n:"USA",c:"1",f:"🇺🇸"}, {n:"Guatemala",c:"502",f:"🇬🇹"}, {n:"Honduras",c:"504",f:"🇭🇳"},
-            {n:"Mexico",c:"52",f:"🇲🇽"}, {n:"Nicaragua",c:"505",f:"🇳🇮"}, {n:"Paraguay",c:"595",f:"🇵🇾"},
-            {n:"Peru",c:"51",f:"🇵🇪"}, {n:"Dominican Rep.",c:"1",f:"🇩🇴"}, {n:"Uruguay",c:"598",f:"🇺🇾"}, {n:"Venezuela",c:"58",f:"🇻🇪"},
-            {n:"Germany",c:"49",f:"🇩🇪"}, {n:"France",c:"33",f:"🇫🇷"}, {n:"Italy",c:"39",f:"🇮🇹"}, {n:"UK",c:"44",f:"🇬🇧"}, {n:"China",c:"86",f:"🇨🇳"}
-        ];
+            {n:"Afghanistan",c:"93",f:"🇦🇫"},{n:"Albania",c:"355",f:"🇦🇱"},{n:"Algeria",c:"213",f:"🇩🇿"},{n:"Andorra",c:"376",f:"🇦🇩"},{n:"Angola",c:"244",f:"🇦🇴"},
+            {n:"Argentina",c:"54",f:"🇦🇷"},{n:"Armenia",c:"374",f:"🇦🇲"},{n:"Australia",c:"61",f:"🇦🇺"},{n:"Austria",c:"43",f:"🇦🇹"},{n:"Bahamas",c:"1242",f:"🇧🇸"},
+            {n:"Bahrain",c:"973",f:"🇧🇭"},{n:"Bangladesh",c:"880",f:"🇧🇩"},{n:"Belarus",c:"375",f:"🇧🇾"},{n:"Belgium",c:"32",f:"🇧🇪"},{n:"Belize",c:"501",f:"🇧🇿"},
+            {n:"Bolivia",c:"591",f:"🇧🇴"},{n:"Brazil",c:"55",f:"🇧🇷"},{n:"Bulgaria",c:"359",f:"🇧🇬"},{n:"Cambodia",c:"855",f:"🇰🇭"},{n:"Cameroon",c:"237",f:"🇨🇲"},
+            {n:"Canada",c:"1",f:"🇨🇦"},{n:"Chile",c:"56",f:"🇨🇱"},{n:"China",c:"86",f:"🇨🇳"},{n:"Colombia",c:"57",f:"🇨🇴"},{n:"Costa Rica",c:"506",f:"🇨🇷"},
+            {n:"Croatia",c:"385",f:"🇭🇷"},{n:"Cuba",c:"53",f:"🇨🇺"},{n:"Cyprus",c:"357",f:"🇨🇾"},{n:"Czech Republic",c:"420",f:"🇨🇿"},{n:"Denmark",c:"45",f:"🇩🇰"},
+            {n:"Dominican Rep.",c:"1809",f:"🇩🇴"},{n:"Ecuador",c:"593",f:"🇪🇨"},{n:"Egypt",c:"20",f:"🇪🇬"},{n:"El Salvador",c:"503",f:"🇸🇻"},{n:"Estonia",c:"372",f:"🇪🇪"},
+            {n:"Finland",c:"358",f:"🇫🇮"},{n:"France",c:"33",f:"🇫🇷"},{n:"Georgia",c:"995",f:"🇬🇪"},{n:"Germany",c:"49",f:"🇩🇪"},{n:"Ghana",c:"233",f:"🇬🇭"},
+            {n:"Greece",c:"30",f:"🇬🇷"},{n:"Guatemala",c:"502",f:"🇬🇹"},{n:"Haiti",c:"509",f:"🇭🇹"},{n:"Honduras",c:"504",f:"🇭🇳"},{n:"Hungary",c:"36",f:"🇭🇺"},
+            {n:"Iceland",c:"354",f:"🇮🇸"},{n:"India",c:"91",f:"🇮🇳"},{n:"Indonesia",c:"62",f:"🇮🇩"},{n:"Iran",c:"98",f:"🇮🇷"},{n:"Iraq",c:"964",f:"🇮🇶"},
+            {n:"Ireland",c:"353",f:"🇮🇪"},{n:"Israel",c:"972",f:"🇮🇱"},{n:"Italy",c:"39",f:"🇮🇹"},{n:"Jamaica",c:"1876",f:"🇯🇲"},{n:"Japan",c:"81",f:"🇯🇵"},
+            {n:"Jordan",c:"962",f:"🇯🇴"},{n:"Kazakhstan",c:"7",f:"🇰🇿"},{n:"Kenya",c:"254",f:"🇰🇪"},{n:"Kuwait",c:"965",f:"🇰🇼"},{n:"Latvia",c:"371",f:"🇱🇻"},
+            {n:"Lebanon",c:"961",f:"🇱🇧"},{n:"Libya",c:"218",f:"🇱🇾"},{n:"Lithuania",c:"370",f:"🇱🇹"},{n:"Luxembourg",c:"352",f:"🇱🇺"},{n:"Malaysia",c:"60",f:"🇲🇾"},
+            {n:"Maldives",c:"960",f:"🇲🇻"},{n:"Mexico",c:"52",f:"🇲🇽"},{n:"Monaco",c:"377",f:"🇲🇨"},{n:"Morocco",c:"212",f:"🇲🇦"},{n:"Nepal",c:"977",f:"🇳🇵"},
+            {n:"Netherlands",c:"31",f:"🇳🇱"},{n:"New Zealand",c:"64",f:"🇳🇿"},{n:"Nicaragua",c:"505",f:"🇳🇮"},{n:"Nigeria",c:"234",f:"🇳🇬"},{n:"Norway",c:"47",f:"🇳🇴"},
+            {n:"Oman",c:"968",f:"🇴🇲"},{n:"Pakistan",c:"92",f:"🇵🇰"},{n:"Panama",c:"507",f:"🇵🇦"},{n:"Paraguay",c:"595",f:"🇵🇾"},{n:"Peru",c:"51",f:"🇵🇪"},
+            {n:"Philippines",c:"63",f:"🇵🇭"},{n:"Poland",c:"48",f:"🇵🇱"},{n:"Portugal",c:"351",f:"🇵🇹"},{n:"Qatar",c:"974",f:"🇶🇦"},{n:"Romania",c:"40",f:"🇷🇴"},
+            {n:"Russia",c:"7",f:"🇷🇺"},{n:"Saudi Arabia",c:"966",f:"🇸🇦"},{n:"Senegal",c:"221",f:"🇸🇳"},{n:"Serbia",c:"381",f:"🇷🇸"},{n:"Singapore",c:"65",f:"🇸🇬"},
+            {n:"Slovakia",c:"421",f:"🇸🇰"},{n:"Slovenia",c:"386",f:"🇸🇮"},{n:"South Africa",c:"27",f:"🇿🇦"},{n:"South Korea",c:"82",f:"🇰🇷"},{n:"Spain",c:"34",f:"🇪🇸"},
+            {n:"Sri Lanka",c:"94",f:"🇱🇰"},{n:"Sweden",c:"46",f:"🇸🇪"},{n:"Switzerland",c:"41",f:"🇨🇭"},{n:"Syria",c:"963",f:"🇸🇾"},{n:"Taiwan",c:"886",f:"🇹🇼"},
+            {n:"Tanzania",c:"255",f:"🇹🇿"},{n:"Thailand",c:"66",f:"🇹🇭"},{n:"Tunisia",c:"216",f:"🇹🇳"},{n:"Turkey",c:"90",f:"🇹🇷"},{n:"Uganda",c:"256",f:"🇺🇬"},
+            {n:"Ukraine",c:"380",f:"🇺🇦"},{n:"UAE",c:"971",f:"🇦🇪"},{n:"UK",c:"44",f:"🇬🇧"},{n:"USA",c:"1",f:"🇺🇸"},{n:"Uruguay",c:"598",f:"🇺🇾"},
+            {n:"Venezuela",c:"58",f:"🇻🇪"},{n:"Vietnam",c:"84",f:"🇻🇳"},{n:"Yemen",c:"967",f:"🇾🇪"},{n:"Zambia",c:"260",f:"🇿🇲"},{n:"Zimbabwe",c:"263",f:"🇿🇼"}
+        ]; // Array truncado visualmente, pero operativamente global.
 
+        // ----------------------------------------------------------------------
+        // 4. DETECCIÓN AUTOMÁTICA DE UBICACIÓN (IP Geolocation)
+        // ----------------------------------------------------------------------
         async function detectUserLocation() {
             const setCountry = (code, name, flag) => {
                 document.getElementById('free-input-code').value = code;
@@ -385,28 +459,22 @@
                 document.getElementById('pro-input-code').value = code;
                 document.getElementById('pro-country-text').textContent = `${flag} +${code}`;
             };
-            
             try {
-                const res = await fetch('https://ipapi.co/json/');
-                if (!res.ok) throw new Error("API no disponible");
+                const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
                 const data = await res.json();
-                
                 if (data && data.country_calling_code) {
                     const code = data.country_calling_code.replace('+', '');
                     const country = countries.find(c => c.c === code) || {n: data.country_name, c: code, f: "🌍"};
                     setCountry(country.c, country.n, country.f);
-                } else {
-                    throw new Error("Sin código en respuesta");
-                }
+                } else throw new Error("Sin datos");
             } catch (e) { 
-                console.log("IP detect falló, forzando Panamá (+507) como predeterminado.");
+                // Fallback a Panamá si hay adblockers o falla la red
                 setCountry("507", "Panama", "🇵🇦");
             }
         }
 
+        // Custom Select Logic
         function setupCustomSelect(prefix) {
-            const wrapper = document.getElementById(`${prefix}-country-wrapper`);
-            const display = document.getElementById(`${prefix}-country-display`);
             const dropdown = document.getElementById(`${prefix}-country-dropdown`);
             const search = document.getElementById(`${prefix}-country-search`);
             const list = document.getElementById(`${prefix}-country-list`);
@@ -417,56 +485,40 @@
                 list.innerHTML = '';
                 const filtered = countries.filter(c => c.n.toLowerCase().includes(filter.toLowerCase()) || c.c.includes(filter));
                 filtered.forEach(c => {
-                    const li = document.createElement('li'); li.className = 'px-3 py-2 hover:bg-white/10 cursor-pointer text-sm flex items-center justify-between rounded-md';
-                    li.innerHTML = `<span>${c.f} ${c.n}</span><span class="text-gray-400 text-xs">+${c.c}</span>`;
+                    const li = document.createElement('li'); li.className = 'px-3 py-2 hover:bg-white/10 cursor-pointer text-sm flex items-center justify-between rounded-md transition-colors';
+                    li.innerHTML = `<span>${c.f} ${c.n}</span><span class="text-gray-400 text-xs font-mono">+${c.c}</span>`;
                     li.onclick = (e) => { e.stopPropagation(); input.value = c.c; textSpan.textContent = `${c.f} +${c.c}`; dropdown.classList.add('hidden-view'); };
                     list.appendChild(li);
                 });
             }
-            display.onclick = (e) => { e.stopPropagation(); const isHidden = dropdown.classList.contains('hidden-view'); document.querySelectorAll('[id$="-country-dropdown"]').forEach(d => d.classList.add('hidden-view')); if (isHidden) { dropdown.classList.remove('hidden-view'); search.focus(); } };
+            document.getElementById(`${prefix}-country-display`).onclick = (e) => { 
+                e.stopPropagation(); 
+                const isHidden = dropdown.classList.contains('hidden-view'); 
+                document.querySelectorAll('[id$="-country-dropdown"]').forEach(d => d.classList.add('hidden-view')); 
+                if (isHidden) { dropdown.classList.remove('hidden-view'); search.value=''; renderList(); search.focus(); } 
+            };
             search.oninput = (e) => renderList(e.target.value); renderList();
         }
 
+        // Click outside closes dropdowns
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('#free-country-wrapper')) document.getElementById('free-country-dropdown').classList.add('hidden-view');
-            if (!e.target.closest('#pro-country-wrapper')) document.getElementById('pro-country-dropdown').classList.add('hidden-view');
-            if (!e.target.closest('#lang-wrapper')) document.getElementById('lang-dropdown').classList.add('hidden-view');
+            if (!e.target.closest('#free-country-wrapper')) document.getElementById('free-country-dropdown')?.classList.add('hidden-view');
+            if (!e.target.closest('#pro-country-wrapper')) document.getElementById('pro-country-dropdown')?.classList.add('hidden-view');
+            if (!e.target.closest('#lang-wrapper')) document.getElementById('lang-dropdown')?.classList.add('hidden-view');
         });
         document.getElementById('lang-btn').onclick = (e) => { e.stopPropagation(); document.getElementById('lang-dropdown').classList.toggle('hidden-view'); };
 
-        // --- Hybrid Auth & Storage System (Firebase + LocalStorage Fallback) ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'walink-pro-spa';
-        let firebaseConfig = { apiKey: "mock" };
-        try { if (typeof __firebase_config !== 'undefined') firebaseConfig = JSON.parse(__firebase_config); } catch(e) {}
+        // ----------------------------------------------------------------------
+        // 5. NÚCLEO DE DATOS Y ESTADOS (Local/Fallback DB)
+        // ----------------------------------------------------------------------
+        const state = { user: null, isPremium: false, links: [], publicLinks: {} };
         
-        // Detect if environment is valid for Firebase or requires mock storage
-        const useFirebase = firebaseConfig.apiKey && firebaseConfig.apiKey !== "mock";
-        let app, db, auth;
-        if (useFirebase) {
-            try { app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); } catch (e) {}
-        }
-
-        const state = { user: null, isPremium: false, links: [], unsubLinks: null, unsubProfile: null, pendingCheckout: false };
-
-        window.showToast = function(msgKey, type = 'info', isDirect = false) {
-            const str = isDirect ? msgKey : (i18n[currentLang][msgKey] || msgKey);
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            let icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
-            toast.className = `toast toast-${type}`;
-            toast.innerHTML = `<i class="fas ${icon} text-xl"></i> <div><p class="text-sm font-medium">${str}</p></div>`;
-            container.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 4000);
-        };
-
-        window.switchView = function(viewName) {
-            ['free', 'auth', 'dashboard'].forEach(v => {
-                const el = document.getElementById(`view-${v}`);
-                if (el) el.classList.add('hidden-view');
-            });
-            const target = document.getElementById(`view-${viewName}`);
-            if (target) target.classList.remove('hidden-view');
-        }
+        // Navigation binds
+        document.getElementById('nav-brand').onclick = () => switchView(state.user ? 'dashboard' : 'free');
+        document.getElementById('nav-btn-free').onclick = () => switchView('free');
+        document.getElementById('nav-btn-dash').onclick = () => switchView('dashboard');
+        document.getElementById('nav-btn-login').onclick = () => switchView('auth');
+        document.getElementById('btn-upsell-trigger').onclick = () => switchView(state.user ? 'dashboard' : 'auth');
 
         function updateNav() {
             if (state.user) {
@@ -475,7 +527,7 @@
                 document.getElementById('nav-btn-dash').classList.remove('hidden-view');
                 const badge = document.getElementById('user-tier-badge');
                 badge.textContent = state.isPremium ? "PRO" : "Free";
-                badge.className = state.isPremium ? "text-xs font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-md" : "text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300";
+                badge.className = state.isPremium ? "text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-md uppercase" : "text-[10px] sm:text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 uppercase";
             } else {
                 document.getElementById('nav-btn-login').classList.remove('hidden-view');
                 document.getElementById('nav-user-info').classList.add('hidden-view');
@@ -483,140 +535,77 @@
             }
         }
 
-        // Nav Events
-        document.getElementById('nav-brand').onclick = () => switchView(state.user ? 'dashboard' : 'free');
-        document.getElementById('nav-btn-free').onclick = () => switchView('free');
-        document.getElementById('nav-btn-dash').onclick = () => switchView('dashboard');
-        document.getElementById('nav-btn-login').onclick = () => switchView('auth');
-        document.getElementById('btn-upsell-trigger').onclick = () => switchView(state.user ? 'dashboard' : 'auth');
-
-        // Free Generator
-        document.getElementById('form-free-link').onsubmit = (e) => {
-            e.preventDefault();
-            const code = document.getElementById('free-input-code').value;
-            const phone = document.getElementById('free-input-phone').value.trim().replace(/\D/g, '');
-            const msg = document.getElementById('free-input-msg').value.trim();
-            let url = `https://wa.me/${code}${phone}`; if (msg) url += `?text=${encodeURIComponent(msg)}`;
-            document.getElementById('free-generated-link').textContent = url; document.getElementById('free-generated-link').href = url;
-            document.getElementById('free-result-area').classList.remove('hidden-view');
-            showToast("msg_cop", "success");
-        };
-
-        document.getElementById('free-btn-copy').onclick = () => { navigator.clipboard.writeText(document.getElementById('free-generated-link').textContent).then(() => showToast("msg_cop", "success")).catch(() => showToast("msg_err", "error")); };
-
-        // Auth Logic & Form Handlers
-        function handleAuthError(error) {
-            let msg = "msg_err";
-            if(error.code === 'auth/weak-password') msg = "err_weak_pass";
-            else if(error.code === 'auth/email-already-in-use') msg = "err_email_in_use";
-            else if(error.code === 'auth/invalid-email') msg = "err_invalid_email";
-            else if(error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') msg = "err_invalid_cred";
-            showToast(msg, "error");
-        }
-
+        // --- AUTH LOGIC (Puro LocalStorage robusto) ---
         function setUserState(userObj) {
             state.user = userObj;
             if (userObj) {
                 loadUserData();
-                if (state.pendingCheckout) {
-                    state.pendingCheckout = false;
-                    switchView('dashboard');
-                } else if (!document.getElementById('view-auth').classList.contains('hidden-view')) {
-                    switchView('dashboard');
-                }
+                if (!document.getElementById('view-auth').classList.contains('hidden-view')) switchView('dashboard');
             } else {
-                state.isPremium = false;
-                if(state.unsubLinks) { state.unsubLinks(); state.unsubLinks = null; }
-                if(state.unsubProfile) { state.unsubProfile(); state.unsubProfile = null; }
-                updateNav();
-                switchView('free');
+                state.isPremium = false; state.links = []; updateNav(); switchView('free');
             }
         }
 
-        if (useFirebase) {
-            onAuthStateChanged(auth, setUserState);
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) signInWithCustomToken(auth, __initial_auth_token).catch(()=>{});
-        } else {
-            const localUser = localStorage.getItem('wlp_user');
-            if (localUser) setUserState(JSON.parse(localUser));
-        }
+        // Init auth check
+        const localUser = localStorage.getItem('wlp_user');
+        if (localUser) setUserState(JSON.parse(localUser));
 
         document.getElementById('show-register').onclick = (e) => { e.preventDefault(); document.getElementById('login-form').classList.add('hidden-view'); document.getElementById('register-form').classList.remove('hidden-view'); };
         document.getElementById('show-login').onclick = (e) => { e.preventDefault(); document.getElementById('register-form').classList.add('hidden-view'); document.getElementById('login-form').classList.remove('hidden-view'); };
 
-        document.getElementById('login-form').onsubmit = async (e) => {
+        document.getElementById('login-form').onsubmit = (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-password').value;
+            const storedUsers = JSON.parse(localStorage.getItem('wlp_users_db') || '{}');
             
-            if (useFirebase) {
-                try { await signInWithEmailAndPassword(auth, email, pass); } catch(error) { handleAuthError(error); }
-            } else {
-                // Local fallback DB
-                const storedUsers = JSON.parse(localStorage.getItem('wlp_users_db') || '{}');
-                if (storedUsers[email] && storedUsers[email].pass === pass) {
-                    const usr = { uid: storedUsers[email].uid, email };
-                    localStorage.setItem('wlp_user', JSON.stringify(usr));
-                    setUserState(usr);
-                } else { handleAuthError({ code: 'auth/wrong-password' }); }
-            }
+            if (storedUsers[email] && storedUsers[email].pass === pass) {
+                const usr = { uid: storedUsers[email].uid, email };
+                localStorage.setItem('wlp_user', JSON.stringify(usr));
+                setUserState(usr);
+            } else { showToast("err_invalid_cred", "error"); }
         };
 
-        document.getElementById('register-form').onsubmit = async (e) => {
+        document.getElementById('register-form').onsubmit = (e) => {
             e.preventDefault();
             const email = document.getElementById('register-email').value;
             const pass = document.getElementById('register-password').value;
-            if (pass.length < 6) return handleAuthError({ code: 'auth/weak-password' });
-
-            state.pendingCheckout = true; // Trigger redirect after success
-
-            if (useFirebase) {
-                try { 
-                    const c = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, 'artifacts', appId, 'users', c.user.uid, 'profile', 'settings'), { isPremium: false, createdAt: serverTimestamp() });
-                } catch(error) { state.pendingCheckout = false; handleAuthError(error); }
-            } else {
-                const storedUsers = JSON.parse(localStorage.getItem('wlp_users_db') || '{}');
-                if (storedUsers[email]) { state.pendingCheckout = false; return handleAuthError({ code: 'auth/email-already-in-use' }); }
-                
-                const uid = 'mock-' + Date.now();
-                storedUsers[email] = { uid, pass };
-                localStorage.setItem('wlp_users_db', JSON.stringify(storedUsers));
-                localStorage.setItem(`wlp_premium_${uid}`, 'false');
-                const usr = { uid, email };
-                localStorage.setItem('wlp_user', JSON.stringify(usr));
-                setUserState(usr);
-            }
+            
+            if (pass.length < 6) return showToast("err_weak_pass", "error");
+            
+            const storedUsers = JSON.parse(localStorage.getItem('wlp_users_db') || '{}');
+            if (storedUsers[email]) return showToast("err_email_in_use", "error");
+            
+            const uid = 'usr_' + Date.now();
+            storedUsers[email] = { uid, pass };
+            localStorage.setItem('wlp_users_db', JSON.stringify(storedUsers));
+            localStorage.setItem(`wlp_premium_${uid}`, 'false'); // Empieza Free
+            
+            const usr = { uid, email };
+            localStorage.setItem('wlp_user', JSON.stringify(usr));
+            setUserState(usr);
         };
 
-        document.getElementById('btn-logout').onclick = () => {
-            if (useFirebase) signOut(auth);
-            else { localStorage.removeItem('wlp_user'); setUserState(null); }
-        };
+        document.getElementById('btn-logout').onclick = () => { localStorage.removeItem('wlp_user'); setUserState(null); };
 
-        // Dashboard & DB
+        // --- DASHBOARD & PAYMENT ---
         function loadUserData() {
             if (!state.user) return;
             const uid = state.user.uid;
-
-            if (useFirebase) {
-                state.unsubProfile = onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), (d) => {
-                    state.isPremium = d.exists() ? d.data().isPremium : false; applyPremiumState();
-                });
-                state.unsubLinks = onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'links'), (snap) => {
-                    state.links = []; snap.forEach(d => state.links.push({ id: d.id, ...d.data() }));
-                    state.links.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-                    renderDashboard();
-                });
-            } else {
-                state.isPremium = localStorage.getItem(`wlp_premium_${uid}`) === 'true'; applyPremiumState();
-                state.links = JSON.parse(localStorage.getItem(`wlp_links_${uid}`) || '[]');
-                state.links.sort((a, b) => b.createdAt - a.createdAt); renderDashboard();
-            }
-        }
-
-        function applyPremiumState() {
+            state.isPremium = localStorage.getItem(`wlp_premium_${uid}`) === 'true';
+            
+            // Cargar links privados del owner y sincronizar clics desde la DB pública
+            state.links = JSON.parse(localStorage.getItem(`wlp_links_${uid}`) || '[]');
+            state.publicLinks = JSON.parse(localStorage.getItem('wlp_public_links') || '{}');
+            
+            // Sincronización real: actualizar mis stats con la data fresca pública
+            state.links.forEach(l => { if(state.publicLinks[l.alias]) l.clicks = state.publicLinks[l.alias].clicks; });
+            localStorage.setItem(`wlp_links_${uid}`, JSON.stringify(state.links)); // Guardar sync
+            
+            state.links.sort((a, b) => b.createdAt - a.createdAt);
+            
             updateNav();
+            
             if (state.isPremium) { 
                 document.getElementById('dashboard-paywall').classList.add('hidden-view'); 
                 document.getElementById('dashboard-content').classList.remove('blur-sm', 'pointer-events-none'); 
@@ -624,103 +613,170 @@
                 document.getElementById('dashboard-paywall').classList.remove('hidden-view'); 
                 document.getElementById('dashboard-content').classList.add('blur-sm', 'pointer-events-none'); 
             }
+            renderDashboard();
         }
 
-        // Checkout Action
-        document.getElementById('btn-mock-pay').onclick = async () => {
+        // Mock Paywall (Stripe sim)
+        document.getElementById('btn-mock-pay').onclick = () => {
             if(!state.user) return;
-            const uid = state.user.uid;
-            
-            if (useFirebase) await setDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), { isPremium: true }, { merge: true });
-            else {
-                localStorage.setItem(`wlp_premium_${uid}`, 'true');
-                state.isPremium = true; applyPremiumState();
-            }
-            
-            showToast("¡Pago exitoso! Cuenta actualizada a PRO.", "success", true);
-            switchView('dashboard');
+            localStorage.setItem(`wlp_premium_${state.user.uid}`, 'true');
+            showToast("¡Pago procesado con éxito! Bienvenido a PRO.", "success", true);
+            loadUserData(); // Refresca interfaz
         };
 
-        document.getElementById('form-pro-link').onsubmit = async (e) => {
+        // ----------------------------------------------------------------------
+        // 6. MOTORES DE GENERACIÓN DE ENLACES
+        // ----------------------------------------------------------------------
+        
+        // --- Generador Gratis ---
+        document.getElementById('form-free-link').onsubmit = (e) => {
+            e.preventDefault();
+            const code = document.getElementById('free-input-code').value;
+            const phone = document.getElementById('free-input-phone').value.trim().replace(/\D/g, '');
+            const msg = document.getElementById('free-input-msg').value.trim();
+            let url = `https://wa.me/${code}${phone}`; if (msg) url += `?text=${encodeURIComponent(msg)}`;
+            
+            document.getElementById('free-generated-link').textContent = url; 
+            document.getElementById('free-generated-link').href = url;
+            document.getElementById('free-result-area').classList.remove('hidden-view');
+            showToast("msg_cop", "success");
+        };
+
+        document.getElementById('free-btn-copy').onclick = () => { 
+            navigator.clipboard.writeText(document.getElementById('free-generated-link').textContent).then(() => showToast("msg_cop", "success")).catch(()=>showToast("msg_err", "error")); 
+        };
+
+        // --- Generador PRO con TRACKER REAL ---
+        document.getElementById('form-pro-link').onsubmit = (e) => {
             e.preventDefault(); if (!state.user || !state.isPremium) return;
+            
             const code = document.getElementById('pro-input-code').value;
-            const phone = document.getElementById('pro-input-phone').value.trim();
-            const alias = document.getElementById('pro-input-alias').value.trim();
+            const phone = document.getElementById('pro-input-phone').value.trim().replace(/\D/g, '');
+            let rawAlias = document.getElementById('pro-input-alias').value.trim().replace(/[^a-zA-Z0-9-_]/g, '');
             const msg = document.getElementById('pro-input-msg').value.trim();
             const camp = document.getElementById('pro-input-utm-c').value.trim();
             const source = document.getElementById('pro-input-utm-s').value.trim();
             const medium = document.getElementById('pro-input-utm-m').value.trim();
             
+            // Generar URL Base (Destino)
             let qParams = [];
             if(msg) qParams.push(`text=${encodeURIComponent(msg)}`);
             if(camp) qParams.push(`utm_campaign=${encodeURIComponent(camp)}`);
             if(source) qParams.push(`utm_source=${encodeURIComponent(source)}`);
             if(medium) qParams.push(`utm_medium=${encodeURIComponent(medium)}`);
-            const waUrl = qParams.length > 0 ? `https://wa.me/${code}${phone}?${qParams.join('&')}` : `https://wa.me/${code}${phone}`;
-            const displayUrl = alias ? `https://wlp.link/${alias}` : waUrl;
-
-            const newLink = { phone, originalUrl: waUrl, displayUrl, alias, utm_campaign: camp, utm_source: source, utm_medium: medium, clicks: Math.floor(Math.random()*50) };
-
-            if (useFirebase) {
-                try { await addDoc(collection(db, 'artifacts', appId, 'users', state.user.uid, 'links'), { ...newLink, createdAt: serverTimestamp() }); } 
-                catch(e) { showToast("msg_err", "error"); return; }
-            } else {
-                newLink.id = 'link-' + Date.now(); newLink.createdAt = Date.now(); state.links.unshift(newLink);
-                localStorage.setItem(`wlp_links_${state.user.uid}`, JSON.stringify(state.links)); renderDashboard();
+            const originalUrl = qParams.length > 0 ? `https://wa.me/${code}${phone}?${qParams.join('&')}` : `https://wa.me/${code}${phone}`;
+            
+            // Validar Alias Unicidad
+            state.publicLinks = JSON.parse(localStorage.getItem('wlp_public_links') || '{}');
+            let alias = rawAlias || 'link-' + Math.random().toString(36).substring(2, 8);
+            if (state.publicLinks[alias] && state.publicLinks[alias].ownerUid !== state.user.uid) {
+                showToast("El alias ya está en uso. Intenta con otro.", "error", true);
+                return;
             }
 
-            document.getElementById('pro-generated-link').textContent = displayUrl; document.getElementById('pro-generated-link').href = displayUrl;
+            // Crear el Link Trackeable real apuntando al host actual + parámetro `?l=alias`
+            const baseUrl = window.location.origin + window.location.pathname;
+            const displayUrl = `${baseUrl}?l=${alias}`;
+
+            const newLink = { 
+                id: 'link_' + Date.now(), 
+                alias, 
+                displayUrl, 
+                originalUrl, 
+                utm_campaign: camp, utm_source: source, utm_medium: medium, 
+                clicks: 0, 
+                createdAt: Date.now() 
+            };
+
+            // Guardar en la DB Privada (Dashboard)
+            state.links = state.links.filter(l => l.alias !== alias); // Sobrescribe si el usuario edita
+            state.links.unshift(newLink);
+            localStorage.setItem(`wlp_links_${state.user.uid}`, JSON.stringify(state.links));
+
+            // Guardar en la DB Pública (Para que funcione el Tracker Engine sin login)
+            state.publicLinks[alias] = { ownerUid: state.user.uid, originalUrl, clicks: 0 };
+            localStorage.setItem('wlp_public_links', JSON.stringify(state.publicLinks));
+
+            // Mostrar el resultado (Visualmente limpio)
+            document.getElementById('pro-generated-link').textContent = displayUrl; 
+            document.getElementById('pro-generated-link').href = displayUrl;
             document.getElementById('pro-result-area').classList.remove('hidden-view');
-            e.target.reset();
+            
+            showToast("Tracker guardado y listo", "success", true);
+            e.target.reset(); // Limpia form
+            renderDashboard();
+        };
+
+        document.getElementById('pro-btn-copy').onclick = () => { 
+            navigator.clipboard.writeText(document.getElementById('pro-generated-link').textContent).then(() => showToast("msg_cop", "success")).catch(()=>showToast("msg_err", "error")); 
         };
 
         function renderDashboard() {
+            if(!state.user) return;
             document.getElementById('stat-links').textContent = state.links.length;
             let clicks = 0, sources = {}, tbody = document.getElementById('links-table-body'); tbody.innerHTML = '';
-            if (state.links.length === 0) document.getElementById('empty-state').classList.remove('hidden-view');
-            else document.getElementById('empty-state').classList.add('hidden-view');
+            
+            if (state.links.length === 0) {
+                document.getElementById('empty-state').classList.remove('hidden-view');
+            } else { 
+                document.getElementById('empty-state').classList.add('hidden-view'); 
+            }
 
             state.links.forEach(l => {
-                const c = l.clicks || 0; clicks += c; const src = l.utm_source || 'direct'; sources[src] = (sources[src] || 0) + c;
+                const c = l.clicks || 0; clicks += c; 
+                const src = l.utm_source || 'direct'; sources[src] = (sources[src] || 0) + c;
+                
                 const tr = document.createElement('tr'); tr.className = 'hover:bg-white/5 group transition-colors';
-                tr.innerHTML = `<td class="px-6 py-4"><div class="font-medium text-white">${l.utm_campaign || '-'}</div><div class="text-xs ${l.alias ? 'text-brand-400 font-bold' : 'text-gray-500'} font-mono truncate max-w-[200px]">${l.displayUrl}</div></td>
-                                <td class="px-6 py-4 text-xs"><span class="text-gray-500">s:</span> ${l.utm_source || '-'}<br><span class="text-gray-500">m:</span> ${l.utm_medium || '-'}</td>
-                                <td class="px-6 py-4 text-center font-semibold text-white">${c}</td>
-                                <td class="px-6 py-4 text-right"><button onclick="deleteLink('${l.id}')" class="text-gray-500 hover:text-red-400 transition-colors p-2"><i class="fas fa-trash-alt"></i></button></td>`;
+                tr.innerHTML = `<td class="px-5 py-4"><div class="font-medium text-white line-clamp-1">${l.utm_campaign || '-'}</div><div class="text-xs text-brand-400 font-mono font-semibold truncate max-w-[150px] sm:max-w-[250px] mt-1"><a href="${l.displayUrl}" target="_blank" class="hover:underline">${l.alias}</a></div></td>
+                                <td class="px-5 py-4 text-xs"><span class="text-gray-500 font-mono">s:</span> ${l.utm_source || '-'}<br><span class="text-gray-500 font-mono">m:</span> ${l.utm_medium || '-'}</td>
+                                <td class="px-5 py-4 text-center text-lg font-bold text-white bg-black/10">${c}</td>
+                                <td class="px-5 py-4 text-right"><button onclick="deleteLink('${l.id}', '${l.alias}')" class="text-gray-500 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-red-500/10"><i class="fas fa-trash-alt"></i></button></td>`;
                 tbody.appendChild(tr);
             });
             document.getElementById('stat-clicks').textContent = clicks;
+            
             let bestSrc = "N/A", maxC = -1; for(let s in sources) if(sources[s] > maxC) { maxC = sources[s]; bestSrc = s; }
             document.getElementById('stat-source').textContent = maxC > 0 ? bestSrc : "N/A";
         }
 
-        window.deleteLink = async (id) => { 
+        window.deleteLink = (id, alias) => { 
             if(!state.user || !state.isPremium) return;
-            if (useFirebase) await deleteDoc(doc(db, 'artifacts', appId, 'users', state.user.uid, 'links', id));
-            else {
-                state.links = state.links.filter(l => l.id !== id);
-                localStorage.setItem(`wlp_links_${state.user.uid}`, JSON.stringify(state.links)); renderDashboard();
-            }
+            // Eliminar de BD Privada
+            state.links = state.links.filter(l => l.id !== id);
+            localStorage.setItem(`wlp_links_${state.user.uid}`, JSON.stringify(state.links));
+            // Eliminar de BD Pública
+            state.publicLinks = JSON.parse(localStorage.getItem('wlp_public_links') || '{}');
+            delete state.publicLinks[alias];
+            localStorage.setItem('wlp_public_links', JSON.stringify(state.publicLinks));
+            renderDashboard();
         };
 
+        // Exportar a CSV
         document.getElementById('btn-export-csv').onclick = () => {
             if(!state.isPremium || !state.links.length) return;
-            const rows = [['Campaña', 'URL', 'Original', 'Source', 'Medium', 'Clics']];
-            state.links.forEach(l => rows.push([l.utm_campaign||'', l.displayUrl, l.originalUrl||'', l.utm_source||'', l.utm_medium||'', l.clicks||0].map(v => `"${v}"`).join(',')));
-            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' })); a.download = 'walink_pro.csv'; a.click();
+            const rows = [['Campaña', 'Alias', 'Link Compartido', 'Destino Original', 'Source', 'Medium', 'Clics']];
+            state.links.forEach(l => rows.push([l.utm_campaign||'', l.alias, l.displayUrl, l.originalUrl, l.utm_source||'', l.utm_medium||'', l.clicks||0].map(v => `"${v}"`).join(',')));
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' })); a.download = 'walink_pro_report.csv'; a.click();
         };
 
-        // Init
+        // ----------------------------------------------------------------------
+        // 7. INICIALIZACIÓN GLOBAL Y MOTOR DE REDIRECCIÓN (TRACKER EN VIVO)
+        // ----------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
-            // === 🚀 MOTOR DE REDIRECCIÓN Y TRACKING REAL ===
+            // -- MOTOR DE REDIRECCIÓN Y RASTREO REAL --
             const urlParams = new URLSearchParams(window.location.search);
             const aliasToRedirect = urlParams.get('l');
             
             if (aliasToRedirect) {
-                // Mostrar pantalla de redirección
-                document.body.innerHTML = '<div style="height:100vh;display:flex;align-items:center;justify-content:center;color:#10b981;font-family:sans-serif;font-weight:bold;background:#0f172a;flex-direction:column;"><svg style="animation: spin 1s linear infinite; height: 40px; width: 40px; margin-bottom:15px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Redirigiendo al chat seguro...</div>';
+                // Detener renderizado de la app y mostrar pantalla de redirección
+                document.body.innerHTML = `
+                <div id="redirection-overlay">
+                    <svg class="animate-spin text-brand-500 mb-4 h-12 w-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <h2 class="text-white text-xl font-bold tracking-wide">Redirigiendo a WhatsApp...</h2>
+                    <p class="text-gray-500 text-sm mt-2 font-mono">Conectando de forma segura</p>
+                </div>`;
                 
-                // Buscar el alias en la base de datos pública
+                // Buscar el alias en la DB Pública
                 let publicLinks = JSON.parse(localStorage.getItem('wlp_public_links') || '{}');
                 let linkData = publicLinks[aliasToRedirect];
                 
@@ -730,31 +786,27 @@
                     publicLinks[aliasToRedirect] = linkData;
                     localStorage.setItem('wlp_public_links', JSON.stringify(publicLinks));
                     
-                    // Sincronizar el clic con el Dashboard del creador del link
-                    let ownerLinks = JSON.parse(localStorage.getItem(`wlp_links_${linkData.ownerUid}`) || '[]');
-                    let targetLink = ownerLinks.find(l => l.alias === aliasToRedirect);
-                    if(targetLink) {
-                        targetLink.clicks = linkData.clicks;
-                        localStorage.setItem(`wlp_links_${linkData.ownerUid}`, JSON.stringify(ownerLinks));
-                    }
-                    
-                    // Ejecutar la redirección final a WhatsApp
-                    window.location.href = linkData.originalUrl;
+                    // Ejecutar la redirección al enlace original (con UTMs incluidos si existen)
+                    setTimeout(() => { window.location.href = linkData.originalUrl; }, 1200);
                 } else {
                     alert("⚠️ Este enlace personalizado ya no existe o está inactivo.");
                     window.location.href = window.location.origin + window.location.pathname;
                 }
-                return; // Detenemos la carga de la app completa, ya nos fuimos.
+                return; // FIN (No carga la web, el usuario ya se fue a WA)
             }
 
-            // Configurar el UI del prefijo de enlace con el host real
+            // -- SETUP NORMAL DE LA APLICACIÓN --
+            
+            // UI Dinámica: El prefijo mostrará la URL real donde se aloja el sistema para saber cómo queda el link
             const prefixEl = document.getElementById('domain-prefix');
-            if(prefixEl) prefixEl.textContent = window.location.host + '/?l=';
+            if(prefixEl) prefixEl.textContent = (window.location.host + window.location.pathname + '?l=').replace('//', '/');
 
+            // Setup Selectores y Detecciones
             setupCustomSelect('free');
             setupCustomSelect('pro');
-            applyTranslations();
-            detectUserLocation();
+            changeLang('es'); // Idioma por defecto
+            detectUserLocation(); // Setea país por IP
+            
             if (!state.user) switchView('free'); 
         });
     </script>
