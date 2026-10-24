@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WaLink Pro - Generador Avanzado</title>
+    <title>WaLink Pro - Global Generator</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,25 +16,17 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
-                    },
+                    fontFamily: { poppins: ['Poppins', 'sans-serif'] },
                     colors: {
-                        glass: 'rgba(255, 255, 255, 0.05)',
-                        glassBorder: 'rgba(255, 255, 255, 0.1)',
-                        brand: {
-                            500: '#10b981', // WhatsApp Green
-                            600: '#059669',
-                        }
+                        brand: { 500: '#10b981', 600: '#059669' }
                     },
                     animation: {
-                        'spin-slow': 'spin 3s linear infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     }
                 }
@@ -48,87 +40,59 @@
             background-color: #0f172a;
             color: #f8fafc;
             overflow-x: hidden;
+            transition: all 0.3s ease;
         }
 
-        /* Animated Background Gradients */
+        /* Background */
         .bg-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            overflow: hidden;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; overflow: hidden;
             background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
         }
-        
         .shape {
-            position: absolute;
-            filter: blur(80px);
-            opacity: 0.5;
-            border-radius: 50%;
+            position: absolute; filter: blur(80px); opacity: 0.5; border-radius: 50%;
             animation: pulse-slow 8s infinite alternate;
         }
-
         .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(16, 185, 129, 0.2); }
         .shape-2 { bottom: -20%; right: -10%; width: 600px; height: 600px; background: rgba(59, 130, 246, 0.15); }
         .shape-3 { top: 40%; left: 50%; width: 400px; height: 400px; background: rgba(139, 92, 246, 0.15); transform: translate(-50%, -50%); }
 
-        /* Glassmorphism Utilities */
+        /* Glassmorphism */
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
-        
         .glass-input {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
             transition: all 0.3s ease;
         }
-        
-        .glass-input:focus {
-            outline: none;
-            border-color: #10b981;
-            background: rgba(0, 0, 0, 0.4);
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-        }
+        .glass-input:focus { outline: none; border-color: #10b981; background: rgba(0, 0, 0, 0.5); }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-
-        /* Hide elements */
-        .hidden-view { display: none !important; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         
-        /* Toast Notification */
-        #toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .hidden-view { display: none !important; }
 
+        /* Custom RTL tweaks */
+        [dir="rtl"] .pl-10 { padding-left: 1rem; padding-right: 2.5rem; }
+        [dir="rtl"] .left-0 { left: auto; right: 0; }
+        [dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+        
+        /* Toast */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        [dir="rtl"] #toast-container { right: auto; left: 20px; }
         .toast {
-            min-width: 250px;
-            padding: 16px;
-            border-radius: 12px;
-            color: white;
-            transform: translateX(120%);
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            min-width: 250px; padding: 16px; border-radius: 12px; color: white;
+            transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex; align-items: center; gap: 12px;
         }
+        [dir="rtl"] .toast { transform: translateX(-120%); }
         .toast.show { transform: translateX(0); }
         .toast-success { background: linear-gradient(to right, #059669, #10b981); }
         .toast-error { background: linear-gradient(to right, #dc2626, #ef4444); }
@@ -137,691 +101,529 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
-    <!-- Background Elements -->
-    <div class="bg-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-    </div>
-
-    <!-- Toast Notifications -->
+    <div class="bg-shapes"><div class="shape shape-1"></div><div class="shape shape-2"></div><div class="shape shape-3"></div></div>
     <div id="toast-container"></div>
 
-    <!-- MAIN APP CONTAINER -->
     <div id="app" class="flex-grow flex flex-col relative z-10 w-full min-h-screen">
-
-        <!-- LOADING OVERLAY -->
-        <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/90 backdrop-blur-md transition-opacity duration-300">
-            <i class="fas fa-circle-notch fa-spin text-5xl text-brand-500 mb-4"></i>
-            <h2 class="text-xl font-semibold tracking-wider">Iniciando WaLink...</h2>
-        </div>
-
-        <!-- GLOBAL NAVBAR -->
-        <nav class="glass-panel px-6 py-4 flex items-center justify-between z-40 relative m-4 rounded-2xl max-w-7xl mx-auto w-[calc(100%-2rem)]">
+        
+        <!-- Navbar -->
+        <nav class="glass-panel px-4 sm:px-6 py-4 flex items-center justify-between z-40 relative m-4 rounded-2xl max-w-7xl mx-auto w-[calc(100%-2rem)]">
             <div class="flex items-center gap-3 cursor-pointer" id="nav-brand">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center shadow-lg">
                     <i class="fab fa-whatsapp text-white text-xl"></i>
                 </div>
-                <h1 class="font-bold text-lg leading-tight hidden sm:block">WaLink</h1>
+                <h1 class="font-bold text-lg hidden sm:block">WaLink</h1>
             </div>
             
-            <div class="flex items-center gap-2 sm:gap-4">
-                <button id="nav-btn-free" class="text-sm font-medium text-gray-300 hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/5">Generador Gratis</button>
-                <button id="nav-btn-dash" class="hidden-view text-sm font-medium text-brand-400 hover:text-brand-300 transition px-3 py-2 rounded-lg bg-brand-500/10 border border-brand-500/20">Dashboard PRO</button>
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button id="nav-btn-free" data-i18n="nav_free" class="text-sm text-gray-300 hover:text-white px-2 py-2 rounded-lg">Generador Gratis</button>
+                <button id="nav-btn-dash" data-i18n="nav_dash" class="hidden-view text-sm text-brand-400 px-2 py-2 rounded-lg bg-brand-500/10 border border-brand-500/20">Dashboard PRO</button>
                 
-                <div class="h-6 w-px bg-white/20 mx-1"></div>
-                
-                <!-- Logged Out State -->
-                <button id="nav-btn-login" class="text-sm font-semibold bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl transition">
-                    Iniciar Sesión
-                </button>
-                
-                <!-- Logged In State -->
-                <div id="nav-user-info" class="hidden-view flex items-center gap-3">
-                    <span id="user-email-display" class="text-sm text-gray-400 hidden md:block"></span>
-                    <span id="user-tier-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 hidden sm:block">Free</span>
-                    <button id="btn-logout" class="text-gray-400 hover:text-red-400 transition bg-black/20 p-2 rounded-lg" title="Cerrar Sesión">
-                        <i class="fas fa-sign-out-alt"></i>
+                <div class="h-6 w-px bg-white/20"></div>
+
+                <!-- Language Selector -->
+                <div class="relative" id="lang-wrapper">
+                    <button id="lang-btn" class="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-black/20 px-3 py-2 rounded-lg border border-white/10">
+                        <span id="lang-display">🇪🇸 ES</span> <i class="fas fa-chevron-down text-xs"></i>
                     </button>
+                    <div id="lang-dropdown" class="absolute right-0 top-full mt-2 w-32 glass-panel rounded-xl hidden-view z-50 overflow-hidden shadow-2xl">
+                        <ul class="text-sm">
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('es')">🇪🇸 Español</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('en')">🇺🇸 English</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('pt')">🇧🇷 Português</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('fr')">🇫🇷 Français</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('de')">🇩🇪 Deutsch</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('it')">🇮🇹 Italiano</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('zh')">🇨🇳 中文</li>
+                            <li class="px-4 py-2 hover:bg-white/10 cursor-pointer" onclick="changeLang('ar')">🇸🇦 العربية</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Auth State -->
+                <button id="nav-btn-login" data-i18n="nav_login" class="text-sm font-semibold bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition">Ingresar</button>
+                <div id="nav-user-info" class="hidden-view flex items-center gap-2">
+                    <span id="user-tier-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 hidden sm:block">Free</span>
+                    <button id="btn-logout" class="text-gray-400 hover:text-red-400 transition bg-black/20 p-2 rounded-lg"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
             </div>
         </nav>
 
-        <!-- VIEWS CONTAINER -->
+        <!-- Views Container -->
         <div id="views-container" class="flex-grow flex flex-col w-full max-w-7xl mx-auto px-4 pb-10 relative">
 
-            <!-- ================= STATE 1: FREE VIEW ================= -->
-            <div id="view-free" class="flex-grow flex flex-col items-center py-10 animation-fade-in w-full">
-                
+            <!-- === FREE VIEW === -->
+            <div id="view-free" class="flex-grow flex flex-col items-center py-10 w-full">
                 <div class="text-center mb-10 max-w-2xl">
-                    <h2 class="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                        Crea Enlaces de WhatsApp en Segundos
-                    </h2>
-                    <p class="text-lg text-gray-400">Genera links directos a tu chat de forma gratuita. Ideal para Instagram, TikTok o tu sitio web.</p>
+                    <h2 data-i18n="free_title" class="text-4xl sm:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Crea Enlaces de WhatsApp</h2>
+                    <p data-i18n="free_desc" class="text-lg text-gray-400">Genera links directos a tu chat de forma gratuita.</p>
                 </div>
 
                 <div class="w-full max-w-xl">
-                    <div class="glass-panel p-6 sm:p-8 rounded-3xl relative overflow-hidden">
-                        <form id="form-free-link" class="space-y-5 relative z-10">
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl relative">
+                        <form id="form-free-link" class="space-y-5">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-1">
-                                    Número de Teléfono <span class="text-brand-400">*</span>
-                                </label>
-                                <div class="flex gap-2">
-                                    <select id="free-select-country" class="glass-input px-2 py-3 rounded-xl text-sm w-[110px] shrink-0 cursor-pointer appearance-none bg-black/40">
-                                        <option value="507" selected>🇵🇦 +507</option>
-                                        <option value="57">🇨🇴 +57</option>
-                                        <option value="52">🇲🇽 +52</option>
-                                        <option value="54">🇦🇷 +54</option>
-                                        <option value="56">🇨🇱 +56</option>
-                                        <option value="51">🇵🇪 +51</option>
-                                        <option value="34">🇪🇸 +34</option>
-                                        <option value="1">🇺🇸 +1</option>
-                                        <option value="58">🇻🇪 +58</option>
-                                        <option value="593">🇪🇨 +593</option>
-                                    </select>
-                                    <div class="relative flex-grow">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-phone text-gray-500"></i>
+                                <label data-i18n="lbl_phone" class="block text-sm font-medium text-gray-300 mb-1">Número de Teléfono *</label>
+                                <div class="flex gap-2 relative">
+                                    <!-- Custom Country Dropdown -->
+                                    <div class="relative w-[120px] sm:w-[140px] shrink-0" id="free-country-wrapper">
+                                        <div class="glass-input h-full px-3 py-3 rounded-xl text-sm flex items-center justify-between cursor-pointer border-white/20 hover:bg-black/40" id="free-country-display">
+                                            <span id="free-country-text" class="truncate">🇵🇦 +507</span> 
+                                            <i class="fas fa-chevron-down text-[10px] ml-1 opacity-70"></i>
                                         </div>
-                                        <input type="tel" id="free-input-phone" required class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="Ej: 61234567" pattern="[0-9]{7,15}">
+                                        <div class="absolute top-full left-0 mt-2 w-[280px] glass-panel bg-[#0f172a]/95 rounded-xl hidden-view z-[60] flex flex-col max-h-72 border border-white/10 shadow-2xl" id="free-country-dropdown">
+                                            <div class="p-2 border-b border-white/10">
+                                                <input type="text" id="free-country-search" data-i18n-placeholder="search_country" class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none" placeholder="Buscar país...">
+                                            </div>
+                                            <ul class="overflow-y-auto flex-grow p-1" id="free-country-list"></ul>
+                                        </div>
+                                        <input type="hidden" id="free-input-code" value="507">
+                                    </div>
+                                    <div class="relative flex-grow">
+                                        <input type="tel" id="free-input-phone" required class="w-full h-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="61234567" pattern="[0-9]{5,15}">
                                     </div>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-1">
-                                    Mensaje Básico (Opcional)
-                                </label>
-                                <textarea id="free-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none" placeholder="Hola, me gustaría más información..."></textarea>
+                                <label data-i18n="lbl_msg" class="block text-sm font-medium text-gray-300 mb-1">Mensaje Básico (Opcional)</label>
+                                <textarea id="free-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none"></textarea>
                             </div>
 
-                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-brand-500/25">
-                                Generar Enlace Gratis
-                            </button>
+                            <button type="submit" data-i18n="btn_gen_free" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-brand-500/25">Generar Enlace</button>
                         </form>
 
-                        <!-- Free Result -->
-                        <div id="free-result-area" class="mt-6 hidden-view relative z-10">
+                        <div id="free-result-area" class="mt-6 hidden-view">
                             <div class="border border-brand-500/30 bg-brand-900/20 rounded-xl p-4 flex items-center justify-between gap-4">
                                 <a href="#" id="free-generated-link" target="_blank" class="text-white text-sm font-mono break-all line-clamp-1 hover:underline"></a>
-                                <button id="free-btn-copy" class="shrink-0 bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-lg text-sm transition-colors">
-                                    <i class="far fa-copy"></i>
-                                </button>
+                                <button id="free-btn-copy" class="shrink-0 bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 rounded-lg transition-colors"><i class="far fa-copy"></i></button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- UPSELL BANNER -->
-                    <div class="mt-8 glass-panel bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border-orange-500/20 p-6 rounded-3xl text-center relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-yellow-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <h3 class="text-xl font-bold text-white mb-2 relative z-10">⚡ ¿Necesitas trackear tus campañas?</h3>
-                        <p class="text-sm text-gray-300 mb-5 relative z-10">Desbloquea UTM Tracking, analíticas de clics en tiempo real y reportes descargables por solo <span class="font-bold text-white">$3/mes</span>.</p>
-                        <button id="btn-upsell-upgrade" class="relative z-10 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-3 px-8 rounded-xl transition-transform transform hover:scale-105 shadow-xl shadow-orange-500/30 inline-flex items-center gap-2">
-                            Upgrade to Pro <i class="fas fa-arrow-right text-sm"></i>
-                        </button>
+                    <!-- Upsell -->
+                    <div class="mt-8 glass-panel bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border-orange-500/20 p-6 rounded-3xl text-center group cursor-pointer" id="btn-upsell-trigger">
+                        <h3 data-i18n="upsell_title" class="text-xl font-bold text-white mb-2">⚡ ¿Necesitas trackear campañas?</h3>
+                        <p data-i18n="upsell_desc" class="text-sm text-gray-300 mb-4">Desbloquea UTMs y analíticas por solo $3/mes.</p>
+                        <button data-i18n="btn_upgrade" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-2 px-6 rounded-xl shadow-lg shadow-orange-500/30">Upgrade to Pro</button>
                     </div>
                 </div>
             </div>
 
-            <!-- ================= STATE 2: AUTH VIEW ================= -->
+            <!-- === AUTH VIEW === -->
             <div id="view-auth" class="hidden-view flex-grow flex items-center justify-center py-10">
-                <div class="glass-panel w-full max-w-md p-8 rounded-3xl relative overflow-hidden">
+                <div class="glass-panel w-full max-w-md p-8 rounded-3xl relative">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-blue-500"></div>
-                    
                     <div class="text-center mb-8">
-                        <h2 class="text-2xl font-bold">Acceso a WaLink Pro</h2>
-                        <p class="text-sm text-gray-400 mt-2">Ingresa para gestionar tus campañas</p>
+                        <h2 data-i18n="auth_title" class="text-2xl font-bold">Acceso WaLink Pro</h2>
                     </div>
 
-                    <!-- Login Form -->
                     <form id="login-form" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
-                            <input type="email" id="login-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="tu@empresa.com">
+                            <label data-i18n="lbl_email" class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
+                            <input type="email" id="login-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
-                            <input type="password" id="login-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="••••••••">
+                            <label data-i18n="lbl_pass" class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+                            <input type="password" id="login-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-colors mt-6 shadow-lg shadow-blue-500/30">
-                            Iniciar Sesión
-                        </button>
+                        <button type="submit" data-i18n="btn_login" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl mt-6">Iniciar Sesión</button>
                         <p class="text-center text-sm text-gray-400 mt-4">
-                            ¿No tienes cuenta? <a href="#" id="show-register" class="text-blue-400 hover:text-blue-300 transition">Regístrate</a>
+                            <span data-i18n="no_account">¿No tienes cuenta?</span> <a href="#" id="show-register" data-i18n="btn_show_reg" class="text-blue-400">Regístrate</a>
                         </p>
                     </form>
 
-                    <!-- Register Form -->
                     <form id="register-form" class="space-y-4 hidden-view">
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
-                            <input type="email" id="register-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="tu@empresa.com">
+                            <label data-i18n="lbl_email" class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
+                            <input type="email" id="register-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
-                            <input type="password" id="register-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="••••••••">
-                            <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle"></i> Mínimo 6 caracteres</p>
+                            <label data-i18n="lbl_pass" class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+                            <input type="password" id="register-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm">
+                            <p data-i18n="pass_hint" class="text-xs text-gray-400 mt-1">Mínimo 6 caracteres</p>
                         </div>
-                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl transition-colors mt-6 shadow-lg shadow-brand-500/30">
-                            Crear Cuenta
-                        </button>
+                        <button type="submit" data-i18n="btn_reg" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl mt-6">Crear Cuenta</button>
                         <p class="text-center text-sm text-gray-400 mt-4">
-                            ¿Ya tienes cuenta? <a href="#" id="show-login" class="text-brand-400 hover:text-brand-300 transition">Inicia Sesión</a>
+                            <span data-i18n="has_account">¿Ya tienes cuenta?</span> <a href="#" id="show-login" data-i18n="btn_show_login" class="text-brand-400">Inicia Sesión</a>
                         </p>
                     </form>
                 </div>
             </div>
 
-            <!-- ================= STATE 3: PRO DASHBOARD VIEW ================= -->
-            <div id="view-dashboard" class="hidden-view flex-grow flex flex-col gap-6 py-6 w-full animation-fade-in relative">
+            <!-- === DASHBOARD VIEW === -->
+            <div id="view-dashboard" class="hidden-view flex-grow flex flex-col gap-6 py-6 w-full relative">
                 
-                <!-- PAYWALL OVERLAY (Blocks interactions if not Premium) -->
-                <div id="dashboard-paywall" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gray-900/70 backdrop-blur-xl rounded-3xl border border-white/10 hidden-view p-6 text-center">
-                    <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl flex items-center justify-center mb-6 shadow-2xl shadow-yellow-500/30 rotate-6">
-                        <i class="fas fa-lock text-4xl text-white -rotate-6"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-3">Activa WaLink PRO</h3>
-                    <p class="text-gray-300 max-w-lg mb-8 text-lg">Estás a un paso de desbloquear el generador con UTMs, el tracker de clics en tiempo real y la exportación de reportes detallados.</p>
-                    
-                    <div class="bg-black/50 p-6 rounded-2xl mb-8 border border-white/10 flex items-center justify-center gap-6 min-w-[300px]">
-                        <div class="text-left">
-                            <p class="text-sm text-gray-400 uppercase tracking-widest font-semibold mb-1">Suscripción Mensual</p>
-                            <p class="text-4xl font-bold text-white">$3<span class="text-xl text-gray-500 font-normal">/mes</span></p>
-                        </div>
-                    </div>
-
-                    <button onclick="triggerMockPayment()" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-4 px-10 rounded-2xl text-lg transition-all transform hover:scale-105 shadow-xl shadow-orange-500/30 flex items-center gap-3">
-                        <i class="fas fa-credit-card"></i> Simular Pago y Desbloquear
-                    </button>
-                    <p class="text-sm text-gray-500 mt-6"><i class="fas fa-shield-alt"></i> Entorno de prueba. No se realizarán cargos reales.</p>
+                <!-- Paywall -->
+                <div id="dashboard-paywall" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-xl rounded-3xl border border-white/10 hidden-view p-6 text-center">
+                    <i class="fas fa-lock text-5xl text-yellow-500 mb-4"></i>
+                    <h3 data-i18n="pay_title" class="text-3xl font-bold mb-3">Activa PRO</h3>
+                    <p data-i18n="pay_desc" class="text-gray-300 max-w-md mb-8">Desbloquea el generador con UTMs y exportación de reportes detallados.</p>
+                    <button onclick="triggerMockPayment()" data-i18n="pay_btn" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 transition-transform">Simular Pago ($3)</button>
                 </div>
 
-                <!-- DASHBOARD CONTENT (Blurred via JS if Paywall is active) -->
                 <div id="dashboard-content" class="w-full flex flex-col gap-6 transition-all duration-500">
-                    
-                    <!-- Advanced Generator Section -->
-                    <div class="glass-panel p-6 sm:p-8 rounded-3xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-                        
-                        <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
-                            <i class="fas fa-link text-brand-400"></i> Generador PRO con UTMs
-                        </h2>
-                        <p class="text-gray-400 text-sm mb-6 border-b border-white/10 pb-4">Crea enlaces, inyecta parámetros de campaña y guárdalos en tu base de datos para medir el rendimiento.</p>
-
+                    <!-- Pro Generator -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl relative overflow-visible z-20">
+                        <h2 data-i18n="pro_title" class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-link text-brand-400"></i> Generador PRO</h2>
                         <form id="form-pro-link" class="space-y-5">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Teléfono <span class="text-brand-400">*</span></label>
-                                    <div class="flex gap-2">
-                                        <select id="pro-select-country" class="glass-input px-2 py-3 rounded-xl text-sm w-[110px] shrink-0 cursor-pointer appearance-none bg-black/40">
-                                            <option value="507" selected>🇵🇦 +507</option>
-                                            <option value="57">🇨🇴 +57</option>
-                                            <option value="52">🇲🇽 +52</option>
-                                            <option value="54">🇦🇷 +54</option>
-                                            <option value="56">🇨🇱 +56</option>
-                                            <option value="51">🇵🇪 +51</option>
-                                            <option value="34">🇪🇸 +34</option>
-                                            <option value="1">🇺🇸 +1</option>
-                                            <option value="58">🇻🇪 +58</option>
-                                            <option value="593">🇪🇨 +593</option>
-                                        </select>
-                                        <input type="tel" id="pro-input-phone" required class="w-full glass-input px-4 py-3 rounded-xl text-sm flex-grow" placeholder="Ej: 61234567" pattern="[0-9]{7,15}">
+                                    <label data-i18n="lbl_phone" class="block text-sm font-medium text-gray-300 mb-1">Teléfono *</label>
+                                    <div class="flex gap-2 relative">
+                                        <!-- Custom Pro Country Dropdown -->
+                                        <div class="relative w-[120px] sm:w-[140px] shrink-0" id="pro-country-wrapper">
+                                            <div class="glass-input h-full px-3 py-3 rounded-xl text-sm flex items-center justify-between cursor-pointer hover:bg-black/40 border-white/20" id="pro-country-display">
+                                                <span id="pro-country-text" class="truncate">🇵🇦 +507</span> <i class="fas fa-chevron-down text-[10px] ml-1 opacity-70"></i>
+                                            </div>
+                                            <div class="absolute top-full left-0 mt-2 w-[280px] glass-panel bg-[#0f172a]/95 rounded-xl hidden-view z-[60] flex flex-col max-h-72 border border-white/10 shadow-2xl" id="pro-country-dropdown">
+                                                <div class="p-2 border-b border-white/10">
+                                                    <input type="text" id="pro-country-search" data-i18n-placeholder="search_country" class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none" placeholder="Buscar país...">
+                                                </div>
+                                                <ul class="overflow-y-auto flex-grow p-1" id="pro-country-list"></ul>
+                                            </div>
+                                            <input type="hidden" id="pro-input-code" value="507">
+                                        </div>
+                                        <input type="tel" id="pro-input-phone" required class="w-full h-full glass-input px-4 py-3 rounded-xl text-sm">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Nombre Campaña (UTM_Campaign)</label>
-                                    <input type="text" id="pro-input-utm-c" class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="Ej: promo_verano">
+                                    <label data-i18n="lbl_camp" class="block text-sm font-medium text-gray-300 mb-1">Campaña (utm_campaign)</label>
+                                    <input type="text" id="pro-input-utm-c" class="w-full glass-input px-4 py-3 rounded-xl text-sm">
                                 </div>
                             </div>
-
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-1">Mensaje Pre-llenado</label>
-                                <textarea id="pro-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none" placeholder="Hola, estoy interesado..."></textarea>
+                                <label data-i18n="lbl_msg" class="block text-sm font-medium text-gray-300 mb-1">Mensaje Pre-llenado</label>
+                                <textarea id="pro-input-msg" rows="2" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none"></textarea>
                             </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl border border-white/5">
-                                <div>
-                                    <label class="block text-xs text-gray-400 mb-1">Fuente (UTM_Source)</label>
-                                    <input type="text" id="pro-input-utm-s" class="w-full glass-input px-3 py-2 rounded-lg text-sm" placeholder="Ej: facebook, instagram">
-                                </div>
-                                <div>
-                                    <label class="block text-xs text-gray-400 mb-1">Medio (UTM_Medium)</label>
-                                    <input type="text" id="pro-input-utm-m" class="w-full glass-input px-3 py-2 rounded-lg text-sm" placeholder="Ej: cpc, social, email">
-                                </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl">
+                                <div><label data-i18n="lbl_src" class="block text-xs text-gray-400 mb-1">Fuente (utm_source)</label><input type="text" id="pro-input-utm-s" class="w-full glass-input px-3 py-2 rounded-lg text-sm"></div>
+                                <div><label data-i18n="lbl_med" class="block text-xs text-gray-400 mb-1">Medio (utm_medium)</label><input type="text" id="pro-input-utm-m" class="w-full glass-input px-3 py-2 rounded-lg text-sm"></div>
                             </div>
-
-                            <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-brand-400 hover:from-brand-500 hover:to-brand-300 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2">
-                                <i class="fas fa-save"></i> Generar y Guardar Enlace
-                            </button>
+                            <button type="submit" data-i18n="btn_gen_pro" class="w-full bg-gradient-to-r from-brand-600 to-brand-400 text-white font-bold py-3.5 rounded-xl shadow-lg">Generar y Guardar</button>
                         </form>
-                        
                         <div id="pro-result-area" class="mt-4 hidden-view">
-                            <div class="border border-brand-500/30 bg-brand-900/20 rounded-xl p-3 flex items-center justify-between gap-4">
-                                <a href="#" id="pro-generated-link" target="_blank" class="text-white text-xs font-mono break-all line-clamp-1 hover:underline"></a>
+                            <div class="border border-brand-500/30 bg-brand-900/20 rounded-xl p-3"><a href="#" id="pro-generated-link" target="_blank" class="text-white text-xs font-mono break-all line-clamp-1 hover:underline"></a></div>
+                        </div>
+                    </div>
+
+                    <!-- Stats & Table (z-index lower so dropdown goes over) -->
+                    <div class="relative z-10 space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="glass-panel p-5 rounded-2xl"><p data-i18n="stat_links" class="text-sm text-gray-400 mb-1">Total Enlaces</p><h4 id="stat-links" class="text-3xl font-bold">0</h4></div>
+                            <div class="glass-panel p-5 rounded-2xl"><p data-i18n="stat_clicks" class="text-sm text-gray-400 mb-1">Clics Totales</p><h4 id="stat-clicks" class="text-3xl font-bold text-brand-400">0</h4></div>
+                            <div class="glass-panel p-5 rounded-2xl"><p data-i18n="stat_src" class="text-sm text-gray-400 mb-1">Mejor Fuente</p><h4 id="stat-source" class="text-xl font-bold capitalize">N/A</h4></div>
+                            <div class="glass-panel p-5 rounded-2xl flex"><button id="btn-export-csv" data-i18n="btn_export" class="w-full bg-blue-600/20 text-blue-300 font-semibold rounded-xl flex items-center justify-center gap-2"><i class="fas fa-file-csv"></i> Export CSV</button></div>
+                        </div>
+
+                        <div class="glass-panel rounded-3xl overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-300">
+                                    <thead class="bg-black/40 text-xs uppercase text-gray-400">
+                                        <tr>
+                                            <th data-i18n="th_camp" class="px-6 py-4">Campaña</th>
+                                            <th data-i18n="th_utm" class="px-6 py-4">UTMs</th>
+                                            <th data-i18n="th_clicks" class="px-6 py-4 text-center">Clics</th>
+                                            <th data-i18n="th_action" class="px-6 py-4 text-right">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="links-table-body" class="divide-y divide-white/5"></tbody>
+                                </table>
+                                <div id="empty-state" class="hidden-view p-10 text-center text-gray-500"><p data-i18n="empty_dash">No hay enlaces guardados.</p></div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Analytics Section -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="glass-panel p-5 rounded-2xl">
-                            <p class="text-sm text-gray-400 mb-1">Total Enlaces</p>
-                            <h4 id="stat-links" class="text-3xl font-bold text-white">0</h4>
-                        </div>
-                        <div class="glass-panel p-5 rounded-2xl relative overflow-hidden">
-                            <div class="absolute right-0 bottom-0 opacity-10 text-6xl -mr-4 -mb-4"><i class="fas fa-mouse-pointer"></i></div>
-                            <p class="text-sm text-gray-400 mb-1">Clics Totales</p>
-                            <h4 id="stat-clicks" class="text-3xl font-bold text-brand-400">0</h4>
-                        </div>
-                        <div class="glass-panel p-5 rounded-2xl">
-                            <p class="text-sm text-gray-400 mb-1">Mejor Fuente</p>
-                            <h4 id="stat-source" class="text-xl font-bold text-white capitalize truncate">N/A</h4>
-                        </div>
-                        <div class="glass-panel p-5 rounded-2xl flex flex-col justify-center">
-                            <button id="btn-export-csv" class="w-full bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 text-blue-300 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-file-csv"></i> Exportar CSV
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Table Section -->
-                    <div class="glass-panel rounded-3xl overflow-hidden flex flex-col">
-                        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
-                            <h3 class="text-lg font-bold">Registro de Campañas</h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm text-gray-300">
-                                <thead class="bg-black/40 text-xs uppercase text-gray-400">
-                                    <tr>
-                                        <th class="px-6 py-4 font-semibold">Campaña / Destino</th>
-                                        <th class="px-6 py-4 font-semibold">UTMs</th>
-                                        <th class="px-6 py-4 font-semibold text-center">Clics</th>
-                                        <th class="px-6 py-4 font-semibold text-right">Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="links-table-body" class="divide-y divide-white/5">
-                                    <!-- Dynamic Rows -->
-                                </tbody>
-                            </table>
-                            <div id="empty-state" class="hidden-view p-10 text-center text-gray-500">
-                                <i class="fas fa-inbox text-4xl mb-3 opacity-30"></i>
-                                <p>No has guardado ningún enlace PRO aún.</p>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
-
         </div>
-
-        <!-- Payment Processing Modal -->
-        <div id="payment-modal" class="hidden-view fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div class="glass-panel p-8 rounded-3xl w-full max-w-sm text-center flex flex-col items-center">
-                <i class="fas fa-circle-notch fa-spin text-5xl text-brand-400 mb-4"></i>
-                <h3 class="text-xl font-bold mb-2">Procesando...</h3>
-                <p class="text-sm text-gray-400">Activando tu suscripción PRO</p>
-            </div>
-        </div>
-
     </div>
 
-    <!-- Firebase App (the core Firebase SDK) -->
+    <!-- Data & Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global Config
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'walink-freemium';
-        let firebaseConfig;
-        try {
-            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "mock", authDomain: "mock", projectId: "mock" };
-        } catch(e) { console.error("Firebase config error", e); }
-
-        const state = {
-            user: null,
-            isPremium: false,
-            links: [],
-            unsubLinks: null,
-            unsubProfile: null
+        // --- I18N Data ---
+        const i18n = {
+            es: { nav_free: "Generador Gratis", nav_dash: "Dashboard PRO", nav_login: "Ingresar", free_title: "Crea Enlaces de WhatsApp", free_desc: "Genera links directos a tu chat de forma gratuita.", lbl_phone: "Número de Teléfono *", lbl_msg: "Mensaje Básico (Opcional)", btn_gen_free: "Generar Enlace", search_country: "Buscar país...", upsell_title: "⚡ ¿Necesitas trackear campañas?", upsell_desc: "Desbloquea UTMs y analíticas por solo $3/mes.", btn_upgrade: "Upgrade to Pro", auth_title: "Acceso WaLink Pro", lbl_email: "Correo Electrónico", lbl_pass: "Contraseña", pass_hint: "Mínimo 6 caracteres", btn_login: "Iniciar Sesión", btn_reg: "Crear Cuenta", no_account: "¿No tienes cuenta?", has_account: "¿Ya tienes cuenta?", btn_show_reg: "Regístrate", btn_show_login: "Inicia Sesión", pay_title: "Activa PRO", pay_desc: "Desbloquea el generador con UTMs y exportación de reportes detallados.", pay_btn: "Simular Pago ($3)", pro_title: "Generador PRO", lbl_camp: "Campaña (utm_campaign)", lbl_src: "Fuente (utm_source)", lbl_med: "Medio (utm_medium)", btn_gen_pro: "Generar y Guardar", stat_links: "Total Enlaces", stat_clicks: "Clics Totales", stat_src: "Mejor Fuente", btn_export: "Exportar CSV", th_camp: "Campaña", th_utm: "UTMs", th_clicks: "Clics", th_action: "Acción", empty_dash: "No hay enlaces guardados.", msg_cop: "Copiado", msg_err: "Error" },
+            en: { nav_free: "Free Generator", nav_dash: "PRO Dashboard", nav_login: "Login", free_title: "Create WhatsApp Links", free_desc: "Generate direct links to your chat for free.", lbl_phone: "Phone Number *", lbl_msg: "Basic Message (Optional)", btn_gen_free: "Generate Link", search_country: "Search country...", upsell_title: "⚡ Need to track campaigns?", upsell_desc: "Unlock UTMs and analytics for just $3/mo.", btn_upgrade: "Upgrade to Pro", auth_title: "WaLink Pro Access", lbl_email: "Email Address", lbl_pass: "Password", pass_hint: "Minimum 6 characters", btn_login: "Log In", btn_reg: "Create Account", no_account: "Don't have an account?", has_account: "Already have an account?", btn_show_reg: "Sign Up", btn_show_login: "Log In", pay_title: "Activate PRO", pay_desc: "Unlock the UTM generator and detailed report exports.", pay_btn: "Simulate Payment ($3)", pro_title: "PRO Generator", lbl_camp: "Campaign (utm_campaign)", lbl_src: "Source (utm_source)", lbl_med: "Medium (utm_medium)", btn_gen_pro: "Generate & Save", stat_links: "Total Links", stat_clicks: "Total Clicks", stat_src: "Best Source", btn_export: "Export CSV", th_camp: "Campaign", th_utm: "UTMs", th_clicks: "Clicks", th_action: "Action", empty_dash: "No saved links yet.", msg_cop: "Copied", msg_err: "Error" },
+            pt: { nav_free: "Gerador Grátis", nav_dash: "Dashboard PRO", nav_login: "Entrar", free_title: "Criar Links do WhatsApp", free_desc: "Gere links diretos para o seu chat gratuitamente.", lbl_phone: "Número de Telefone *", lbl_msg: "Mensagem (Opcional)", btn_gen_free: "Gerar Link", search_country: "Procurar país...", upsell_title: "⚡ Precisa rastrear campanhas?", upsell_desc: "Desbloqueie UTMs e análises por apenas US$ 3/mês.", btn_upgrade: "Atualizar para Pro", auth_title: "Acesso WaLink Pro", lbl_email: "Endereço de Email", lbl_pass: "Senha", pass_hint: "Mínimo de 6 caracteres", btn_login: "Entrar", btn_reg: "Criar Conta", no_account: "Não tem uma conta?", has_account: "Já tem conta?", btn_show_reg: "Inscrever-se", btn_show_login: "Conecte-se", pay_title: "Ativar PRO", pay_desc: "Desbloqueie o gerador UTM e exportações detalhadas.", pay_btn: "Simular Pagamento ($3)", pro_title: "Gerador PRO", lbl_camp: "Campanha (utm_campaign)", lbl_src: "Fonte (utm_source)", lbl_med: "Meio (utm_medium)", btn_gen_pro: "Gerar e Salvar", stat_links: "Total de Links", stat_clicks: "Total de Cliques", stat_src: "Melhor Fonte", btn_export: "Exportar CSV", th_camp: "Campanha", th_utm: "UTMs", th_clicks: "Cliques", th_action: "Ação", empty_dash: "Nenhum link salvo ainda.", msg_cop: "Copiado", msg_err: "Erro" },
+            fr: { nav_free: "Générateur Gratuit", nav_dash: "Tableau PRO", nav_login: "Connexion", free_title: "Créer Liens WhatsApp", free_desc: "Générez des liens directs gratuits.", lbl_phone: "Numéro de Téléphone *", lbl_msg: "Message (Optionnel)", btn_gen_free: "Générer Lien", search_country: "Rechercher un pays...", upsell_title: "⚡ Suivre vos campagnes?", upsell_desc: "Débloquez les UTM et les analyses pour 3$/mois.", btn_upgrade: "Passer à Pro", auth_title: "Accès WaLink Pro", lbl_email: "Adresse Email", lbl_pass: "Mot de passe", pass_hint: "Minimum 6 caractères", btn_login: "Se Connecter", btn_reg: "Créer un compte", no_account: "Pas de compte?", has_account: "Déjà un compte?", btn_show_reg: "S'inscrire", btn_show_login: "Connexion", pay_title: "Activer PRO", pay_desc: "Débloquez le générateur UTM et les exports.", pay_btn: "Simuler Paiement (3$)", pro_title: "Générateur PRO", lbl_camp: "Campagne (utm_campaign)", lbl_src: "Source (utm_source)", lbl_med: "Moyen (utm_medium)", btn_gen_pro: "Générer & Sauvegarder", stat_links: "Total Liens", stat_clicks: "Total Clics", stat_src: "Meilleure Source", btn_export: "Exporter CSV", th_camp: "Campagne", th_utm: "UTMs", th_clicks: "Clics", th_action: "Action", empty_dash: "Aucun lien sauvegardé.", msg_cop: "Copié", msg_err: "Erreur" },
+            de: { nav_free: "Kostenlos", nav_dash: "PRO Dashboard", nav_login: "Einloggen", free_title: "WhatsApp-Links erstellen", free_desc: "Generieren Sie kostenlose direkte Links.", lbl_phone: "Telefonnummer *", lbl_msg: "Nachricht (Optional)", btn_gen_free: "Link Generieren", search_country: "Land suchen...", upsell_title: "⚡ Kampagnen verfolgen?", upsell_desc: "UTMs und Analysen für nur 3$/Monat freischalten.", btn_upgrade: "Auf Pro upgraden", auth_title: "WaLink Pro Zugang", lbl_email: "E-Mail", lbl_pass: "Passwort", pass_hint: "Mindestens 6 Zeichen", btn_login: "Anmelden", btn_reg: "Konto erstellen", no_account: "Kein Konto?", has_account: "Bereits ein Konto?", btn_show_reg: "Registrieren", btn_show_login: "Anmelden", pay_title: "PRO Aktivieren", pay_desc: "UTM-Generator und Exporte freischalten.", pay_btn: "Zahlung Simulieren (3$)", pro_title: "PRO Generator", lbl_camp: "Kampagne (utm_campaign)", lbl_src: "Quelle (utm_source)", lbl_med: "Medium (utm_medium)", btn_gen_pro: "Generieren & Speichern", stat_links: "Gesamt Links", stat_clicks: "Gesamt Klicks", stat_src: "Beste Quelle", btn_export: "CSV Exportieren", th_camp: "Kampagne", th_utm: "UTMs", th_clicks: "Klicks", th_action: "Aktion", empty_dash: "Keine Links gespeichert.", msg_cop: "Kopiert", msg_err: "Fehler" },
+            it: { nav_free: "Generatore Gratis", nav_dash: "Dashboard PRO", nav_login: "Accedi", free_title: "Crea Link WhatsApp", free_desc: "Genera link diretti gratuitamente.", lbl_phone: "Numero di Telefono *", lbl_msg: "Messaggio (Opzionale)", btn_gen_free: "Genera Link", search_country: "Cerca paese...", upsell_title: "⚡ Tracciare le campagne?", upsell_desc: "Sblocca UTM e analisi a soli $3/mese.", btn_upgrade: "Passa a Pro", auth_title: "Accesso WaLink Pro", lbl_email: "Email", lbl_pass: "Password", pass_hint: "Minimo 6 caratteri", btn_login: "Accedi", btn_reg: "Crea Account", no_account: "Non hai un account?", has_account: "Hai già un account?", btn_show_reg: "Registrati", btn_show_login: "Accedi", pay_title: "Attiva PRO", pay_desc: "Sblocca il generatore UTM e le esportazioni.", pay_btn: "Simula Pagamento ($3)", pro_title: "Generatore PRO", lbl_camp: "Campagna (utm_campaign)", lbl_src: "Fonte (utm_source)", lbl_med: "Mezzo (utm_medium)", btn_gen_pro: "Genera e Salva", stat_links: "Totale Link", stat_clicks: "Totale Clic", stat_src: "Miglior Fonte", btn_export: "Esporta CSV", th_camp: "Campagna", th_utm: "UTMs", th_clicks: "Clic", th_action: "Azione", empty_dash: "Nessun link salvato.", msg_cop: "Copiato", msg_err: "Errore" },
+            zh: { nav_free: "免费生成器", nav_dash: "PRO 仪表板", nav_login: "登录", free_title: "创建 WhatsApp 链接", free_desc: "免费生成直接链接.", lbl_phone: "电话号码 *", lbl_msg: "基本信息 (可选)", btn_gen_free: "生成链接", search_country: "搜索国家...", upsell_title: "⚡ 需要跟踪活动?", upsell_desc: "每月仅需3美元即可解锁 UTM 和分析.", btn_upgrade: "升级到 Pro", auth_title: "WaLink Pro 访问", lbl_email: "电子邮件", lbl_pass: "密码", pass_hint: "最少 6 个字符", btn_login: "登录", btn_reg: "创建账户", no_account: "没有账户?", has_account: "已有账户?", btn_show_reg: "注册", btn_show_login: "登录", pay_title: "激活 PRO", pay_desc: "解锁 UTM 生成器和详细报告导出.", pay_btn: "模拟支付 ($3)", pro_title: "PRO 生成器", lbl_camp: "活动 (utm_campaign)", lbl_src: "来源 (utm_source)", lbl_med: "媒介 (utm_medium)", btn_gen_pro: "生成并保存", stat_links: "总链接", stat_clicks: "总点击", stat_src: "最佳来源", btn_export: "导出 CSV", th_camp: "活动", th_utm: "UTMs", th_clicks: "点击", th_action: "操作", empty_dash: "尚未保存链接.", msg_cop: "已复制", msg_err: "错误" },
+            ar: { nav_free: "مولد مجاني", nav_dash: "لوحة PRO", nav_login: "دخول", free_title: "إنشاء روابط واتساب", free_desc: "قم بإنشاء روابط مباشرة للدردشة مجانًا.", lbl_phone: "رقم الهاتف *", lbl_msg: "رسالة (اختياري)", btn_gen_free: "إنشاء رابط", search_country: "ابحث عن دولة...", upsell_title: "⚡ تتبع الحملات؟", upsell_desc: "افتح روابط UTM والتحليلات مقابل 3 دولارات فقط.", btn_upgrade: "الترقية إلى Pro", auth_title: "الوصول إلى WaLink Pro", lbl_email: "البريد الإلكتروني", lbl_pass: "كلمة المرور", pass_hint: "6 أحرف كحد أدنى", btn_login: "تسجيل الدخول", btn_reg: "إنشاء حساب", no_account: "ليس لديك حساب؟", has_account: "لديك حساب بالفعل؟", btn_show_reg: "اشتراك", btn_show_login: "دخول", pay_title: "تفعيل PRO", pay_desc: "افتح مولد UTM وتصدير التقارير.", pay_btn: "محاكاة الدفع ($3)", pro_title: "مولد PRO", lbl_camp: "الحملة", lbl_src: "المصدر", lbl_med: "الوسيط", btn_gen_pro: "إنشاء وحفظ", stat_links: "إجمالي الروابط", stat_clicks: "إجمالي النقرات", stat_src: "أفضل مصدر", btn_export: "تصدير CSV", th_camp: "الحملة", th_utm: "UTMs", th_clicks: "نقرات", th_action: "عمل", empty_dash: "لا توجد روابط محفوظة.", msg_cop: "تم النسخ", msg_err: "خطأ" }
         };
 
+        let currentLang = 'es';
+        window.changeLang = function(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('lang-display').innerHTML = getLangFlag(lang);
+            document.getElementById('lang-dropdown').classList.add('hidden-view');
+            applyTranslations();
+        };
+        
+        function getLangFlag(l) {
+            const m = { es: '🇪🇸 ES', en: '🇺🇸 EN', pt: '🇧🇷 PT', fr: '🇫🇷 FR', de: '🇩🇪 DE', it: '🇮🇹 IT', zh: '🇨🇳 ZH', ar: '🇸🇦 AR' }; return m[l];
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) el.textContent = i18n[currentLang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[currentLang][key]) el.placeholder = i18n[currentLang][key];
+            });
+        }
+
+        // --- Country Data --- (Abridged core global list for efficiency)
+        const countries = [
+            {n:"Afghanistan",c:"93",f:"🇦🇫"},{n:"Albania",c:"355",f:"🇦🇱"},{n:"Algeria",c:"213",f:"🇩🇿"},{n:"Andorra",c:"376",f:"🇦🇩"},{n:"Angola",c:"244",f:"🇦🇴"},
+            {n:"Argentina",c:"54",f:"🇦🇷"},{n:"Australia",c:"61",f:"🇦🇺"},{n:"Austria",c:"43",f:"🇦🇹"},{n:"Bahamas",c:"1",f:"🇧🇸"},{n:"Bahrain",c:"973",f:"🇧🇭"},
+            {n:"Bangladesh",c:"880",f:"🇧🇩"},{n:"Belgium",c:"32",f:"🇧🇪"},{n:"Belize",c:"501",f:"🇧🇿"},{n:"Bolivia",c:"591",f:"🇧🇴"},{n:"Brazil",c:"55",f:"🇧🇷"},
+            {n:"Canada",c:"1",f:"🇨🇦"},{n:"Chile",c:"56",f:"🇨🇱"},{n:"China",c:"86",f:"🇨🇳"},{n:"Colombia",c:"57",f:"🇨🇴"},{n:"Costa Rica",c:"506",f:"🇨🇷"},
+            {n:"Croatia",c:"385",f:"🇭🇷"},{n:"Cuba",c:"53",f:"🇨🇺"},{n:"Czech Republic",c:"420",f:"🇨🇿"},{n:"Denmark",c:"45",f:"🇩🇰"},{n:"Dominican Republic",c:"1",f:"🇩🇴"},
+            {n:"Ecuador",c:"593",f:"🇪🇨"},{n:"Egypt",c:"20",f:"🇪🇬"},{n:"El Salvador",c:"503",f:"🇸🇻"},{n:"Finland",c:"358",f:"🇫🇮"},{n:"France",c:"33",f:"🇫🇷"},
+            {n:"Germany",c:"49",f:"🇩🇪"},{n:"Greece",c:"30",f:"🇬🇷"},{n:"Guatemala",c:"502",f:"🇬🇹"},{n:"Honduras",c:"504",f:"🇭🇳"},{n:"Hong Kong",c:"852",f:"🇭🇰"},
+            {n:"India",c:"91",f:"🇮🇳"},{n:"Indonesia",c:"62",f:"🇮🇩"},{n:"Ireland",c:"353",f:"🇮🇪"},{n:"Israel",c:"972",f:"🇮🇱"},{n:"Italy",c:"39",f:"🇮🇹"},
+            {n:"Japan",c:"81",f:"🇯🇵"},{n:"Jordan",c:"962",f:"🇯🇴"},{n:"Kenya",c:"254",f:"🇰🇪"},{n:"Kuwait",c:"965",f:"🇰🇼"},{n:"Lebanon",c:"961",f:"🇱🇧"},
+            {n:"Malaysia",c:"60",f:"🇲🇾"},{n:"Mexico",c:"52",f:"🇲🇽"},{n:"Morocco",c:"212",f:"🇲🇦"},{n:"Netherlands",c:"31",f:"🇳🇱"},{n:"New Zealand",c:"64",f:"🇳🇿"},
+            {n:"Nicaragua",c:"505",f:"🇳🇮"},{n:"Nigeria",c:"234",f:"🇳🇬"},{n:"Norway",c:"47",f:"🇳🇴"},{n:"Oman",c:"968",f:"🇴🇲"},{n:"Pakistan",c:"92",f:"🇵🇰"},
+            {n:"Panama",c:"507",f:"🇵🇦"},{n:"Paraguay",c:"595",f:"🇵🇾"},{n:"Peru",c:"51",f:"🇵🇪"},{n:"Philippines",c:"63",f:"🇵🇭"},{n:"Poland",c:"48",f:"🇵🇱"},
+            {n:"Portugal",c:"351",f:"🇵🇹"},{n:"Qatar",c:"974",f:"🇶🇦"},{n:"Russia",c:"7",f:"🇷🇺"},{n:"Saudi Arabia",c:"966",f:"🇸🇦"},{n:"Singapore",c:"65",f:"🇸🇬"},
+            {n:"South Africa",c:"27",f:"🇿🇦"},{n:"South Korea",c:"82",f:"🇰🇷"},{n:"Spain",c:"34",f:"🇪🇸"},{n:"Sweden",c:"46",f:"🇸🇪"},{n:"Switzerland",c:"41",f:"🇨🇭"},
+            {n:"Taiwan",c:"886",f:"🇹🇼"},{n:"Thailand",c:"66",f:"🇹🇭"},{n:"Turkey",c:"90",f:"🇹🇷"},{n:"UAE",c:"971",f:"🇦🇪"},{n:"UK",c:"44",f:"🇬🇧"},
+            {n:"USA",c:"1",f:"🇺🇸"},{n:"Uruguay",c:"598",f:"🇺🇾"},{n:"Venezuela",c:"58",f:"🇻🇪"},{n:"Vietnam",c:"84",f:"🇻🇳"}
+        ]; // Added common ones. Assumed fully populated in prod.
+
+        // Custom Select Logic
+        function setupCustomSelect(prefix) {
+            const wrapper = document.getElementById(`${prefix}-country-wrapper`);
+            const display = document.getElementById(`${prefix}-country-display`);
+            const dropdown = document.getElementById(`${prefix}-country-dropdown`);
+            const search = document.getElementById(`${prefix}-country-search`);
+            const list = document.getElementById(`${prefix}-country-list`);
+            const input = document.getElementById(`${prefix}-input-code`);
+            const textSpan = document.getElementById(`${prefix}-country-text`);
+
+            function renderList(filter = '') {
+                list.innerHTML = '';
+                const filtered = countries.filter(c => c.n.toLowerCase().includes(filter.toLowerCase()) || c.c.includes(filter));
+                filtered.forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = 'px-3 py-2 hover:bg-white/10 cursor-pointer text-sm flex items-center justify-between rounded-md';
+                    li.innerHTML = `<span>${c.f} ${c.n}</span><span class="text-gray-400 text-xs">+${c.c}</span>`;
+                    li.onclick = (e) => {
+                        e.stopPropagation();
+                        input.value = c.c;
+                        textSpan.textContent = `${c.f} +${c.c}`;
+                        dropdown.classList.add('hidden-view');
+                    };
+                    list.appendChild(li);
+                });
+            }
+
+            display.onclick = (e) => {
+                e.stopPropagation();
+                const isHidden = dropdown.classList.contains('hidden-view');
+                document.querySelectorAll('[id$="-country-dropdown"]').forEach(d => d.classList.add('hidden-view'));
+                if (isHidden) { dropdown.classList.remove('hidden-view'); search.focus(); }
+            };
+
+            search.oninput = (e) => renderList(e.target.value);
+            renderList();
+        }
+
+        // Global Clicks
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#free-country-wrapper')) document.getElementById('free-country-dropdown').classList.add('hidden-view');
+            if (!e.target.closest('#pro-country-wrapper')) document.getElementById('pro-country-dropdown').classList.add('hidden-view');
+            if (!e.target.closest('#lang-wrapper')) document.getElementById('lang-dropdown').classList.add('hidden-view');
+        });
+        
+        document.getElementById('lang-btn').onclick = (e) => { e.stopPropagation(); document.getElementById('lang-dropdown').classList.toggle('hidden-view'); };
+
+        // --- Core Application Logic ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'walink-global';
+        let firebaseConfig = { apiKey: "mock", authDomain: "mock", projectId: "mock" };
+        try { if (typeof __firebase_config !== 'undefined') firebaseConfig = JSON.parse(__firebase_config); } catch(e) {}
+
+        const state = { user: null, isPremium: false, links: [], unsubLinks: null, unsubProfile: null };
         let app, db, auth;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-        } catch (e) { console.error("Firebase init error", e); }
+        try { app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); } catch (e) {}
 
-        // DOM Elements Map
-        const DOM = {
-            loader: document.getElementById('global-loader'),
-            // Nav
-            navBrand: document.getElementById('nav-brand'),
-            navBtnFree: document.getElementById('nav-btn-free'),
-            navBtnDash: document.getElementById('nav-btn-dash'),
-            navBtnLogin: document.getElementById('nav-btn-login'),
-            navUserInfo: document.getElementById('nav-user-info'),
-            emailDisplay: document.getElementById('user-email-display'),
-            tierBadge: document.getElementById('user-tier-badge'),
-            btnLogout: document.getElementById('btn-logout'),
-            // Views
-            viewFree: document.getElementById('view-free'),
-            viewAuth: document.getElementById('view-auth'),
-            viewDash: document.getElementById('view-dashboard'),
-            // Free View Elements
-            formFree: document.getElementById('form-free-link'),
-            freeCountry: document.getElementById('free-select-country'),
-            freePhone: document.getElementById('free-input-phone'),
-            freeMsg: document.getElementById('free-input-msg'),
-            freeResult: document.getElementById('free-result-area'),
-            freeLink: document.getElementById('free-generated-link'),
-            freeCopy: document.getElementById('free-btn-copy'),
-            btnUpsell: document.getElementById('btn-upsell-upgrade'),
-            // Auth View Elements
-            formLogin: document.getElementById('login-form'),
-            formReg: document.getElementById('register-form'),
-            showReg: document.getElementById('show-register'),
-            showLog: document.getElementById('show-login'),
-            // Dashboard View Elements
-            dashPaywall: document.getElementById('dashboard-paywall'),
-            dashContent: document.getElementById('dashboard-content'),
-            formPro: document.getElementById('form-pro-link'),
-            proCountry: document.getElementById('pro-select-country'),
-            proPhone: document.getElementById('pro-input-phone'),
-            proMsg: document.getElementById('pro-input-msg'),
-            proUtmC: document.getElementById('pro-input-utm-c'),
-            proUtmS: document.getElementById('pro-input-utm-s'),
-            proUtmM: document.getElementById('pro-input-utm-m'),
-            proResult: document.getElementById('pro-result-area'),
-            proLink: document.getElementById('pro-generated-link'),
-            // Stats & Tables
-            statLinks: document.getElementById('stat-links'),
-            statClicks: document.getElementById('stat-clicks'),
-            statSource: document.getElementById('stat-source'),
-            btnCsv: document.getElementById('btn-export-csv'),
-            tableBody: document.getElementById('links-table-body'),
-            emptyState: document.getElementById('empty-state'),
-            payModal: document.getElementById('payment-modal')
-        };
-
-        // --- Utils ---
-        window.showToast = function(msg, type = 'info') {
+        window.showToast = function(msgKey, type = 'info', isDirect = false) {
+            const str = isDirect ? msgKey : (i18n[currentLang][msgKey] || msgKey);
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             let icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
             toast.className = `toast toast-${type}`;
-            toast.innerHTML = `<i class="fas ${icon} text-xl"></i> <div><p class="text-sm font-medium">${msg}</p></div>`;
+            toast.innerHTML = `<i class="fas ${icon} text-xl"></i> <div><p class="text-sm font-medium">${str}</p></div>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         };
 
         function switchView(viewName) {
-            DOM.viewFree.classList.add('hidden-view');
-            DOM.viewAuth.classList.add('hidden-view');
-            DOM.viewDash.classList.add('hidden-view');
-
-            if (viewName === 'free') DOM.viewFree.classList.remove('hidden-view');
-            if (viewName === 'auth') DOM.viewAuth.classList.remove('hidden-view');
-            if (viewName === 'dashboard') DOM.viewDash.classList.remove('hidden-view');
+            ['free', 'auth', 'dashboard'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden-view'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden-view');
         }
 
         function updateNav() {
             if (state.user) {
-                DOM.navBtnLogin.classList.add('hidden-view');
-                DOM.navUserInfo.classList.remove('hidden-view');
-                DOM.navBtnDash.classList.remove('hidden-view');
-                DOM.emailDisplay.textContent = state.user.email || 'Pro User';
-                
-                DOM.tierBadge.textContent = state.isPremium ? "PRO" : "Free";
-                DOM.tierBadge.className = state.isPremium ? 
-                    "text-xs font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hidden sm:block shadow-md" : 
-                    "text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 hidden sm:block";
+                document.getElementById('nav-btn-login').classList.add('hidden-view');
+                document.getElementById('nav-user-info').classList.remove('hidden-view');
+                document.getElementById('nav-btn-dash').classList.remove('hidden-view');
+                const badge = document.getElementById('user-tier-badge');
+                badge.textContent = state.isPremium ? "PRO" : "Free";
+                badge.className = state.isPremium ? "text-xs font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-md" : "text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300";
             } else {
-                DOM.navBtnLogin.classList.remove('hidden-view');
-                DOM.navUserInfo.classList.add('hidden-view');
-                DOM.navBtnDash.classList.add('hidden-view');
+                document.getElementById('nav-btn-login').classList.remove('hidden-view');
+                document.getElementById('nav-user-info').classList.add('hidden-view');
+                document.getElementById('nav-btn-dash').classList.add('hidden-view');
             }
         }
 
-        // --- Navigation Events ---
-        DOM.navBrand.addEventListener('click', () => switchView(state.user ? 'dashboard' : 'free'));
-        DOM.navBtnFree.addEventListener('click', () => switchView('free'));
-        DOM.navBtnDash.addEventListener('click', () => switchView('dashboard'));
-        DOM.navBtnLogin.addEventListener('click', () => switchView('auth'));
-        
-        DOM.btnUpsell.addEventListener('click', () => {
-            if(state.user) {
-                switchView('dashboard');
+        // Nav Events
+        document.getElementById('nav-brand').onclick = () => switchView(state.user ? 'dashboard' : 'free');
+        document.getElementById('nav-btn-free').onclick = () => switchView('free');
+        document.getElementById('nav-btn-dash').onclick = () => switchView('dashboard');
+        document.getElementById('nav-btn-login').onclick = () => switchView('auth');
+        document.getElementById('btn-upsell-trigger').onclick = () => switchView(state.user ? 'dashboard' : 'auth');
+
+        // Generators
+        document.getElementById('form-free-link').onsubmit = (e) => {
+            e.preventDefault();
+            const code = document.getElementById('free-input-code').value;
+            const phone = document.getElementById('free-input-phone').value.trim().replace(/\D/g, '');
+            const msg = document.getElementById('free-input-msg').value.trim();
+            let url = `https://wa.me/${code}${phone}`; if (msg) url += `?text=${encodeURIComponent(msg)}`;
+            document.getElementById('free-generated-link').textContent = url;
+            document.getElementById('free-generated-link').href = url;
+            document.getElementById('free-result-area').classList.remove('hidden-view');
+            showToast("msg_cop", "success", true); // Using raw text fallback for simplicity on dynamic actions
+        };
+
+        document.getElementById('free-btn-copy').onclick = () => {
+            navigator.clipboard.writeText(document.getElementById('free-generated-link').textContent).then(() => showToast("msg_cop", "success")).catch(() => showToast("msg_err", "error"));
+        };
+
+        // Auth
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                state.user = user; loadUserData();
+                if(!document.getElementById('view-auth').classList.contains('hidden-view')) switchView('dashboard');
             } else {
-                switchView('auth');
-                showToast("Crea tu cuenta para acceder a PRO", "info");
-            }
-        });
-
-        // --- Free Generator Logic ---
-        DOM.formFree.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const code = DOM.freeCountry.value;
-            const phone = DOM.freePhone.value.trim().replace(/\D/g, '');
-            const msg = DOM.freeMsg.value.trim();
-            const fullPhone = `${code}${phone}`;
-            
-            let url = `https://wa.me/${fullPhone}`;
-            if (msg) url += `?text=${encodeURIComponent(msg)}`;
-            
-            DOM.freeLink.textContent = url;
-            DOM.freeLink.href = url;
-            DOM.freeResult.classList.remove('hidden-view');
-            showToast("Enlace básico generado", "success");
-        });
-
-        DOM.freeCopy.addEventListener('click', () => copyToClipboard(DOM.freeLink.textContent));
-
-        function copyToClipboard(text) {
-            const ta = document.createElement("textarea");
-            ta.value = text;
-            document.body.appendChild(ta);
-            ta.select();
-            try { document.execCommand('copy'); showToast("Copiado al portapapeles", "success"); } 
-            catch (err) { showToast("Error al copiar", "error"); }
-            document.body.removeChild(ta);
-        }
-
-        // --- Auth Logic ---
-        async function initAuth() {
-            onAuthStateChanged(auth, (user) => {
-                DOM.loader.classList.add('hidden-view');
-                if (user) {
-                    state.user = user;
-                    loadUserData();
-                    // Switch view on login if they were on auth screen
-                    if(!DOM.viewAuth.classList.contains('hidden-view')) switchView('dashboard');
-                } else {
-                    state.user = null;
-                    if(state.unsubLinks) state.unsubLinks();
-                    if(state.unsubProfile) state.unsubProfile();
-                    state.isPremium = false;
-                    updateNav();
-                    if(DOM.viewDash.classList.contains('hidden-view') === false) switchView('free');
-                }
-            });
-
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e){}
-            }
-        }
-
-        DOM.showReg.addEventListener('click', (e) => { e.preventDefault(); DOM.formLogin.classList.add('hidden-view'); DOM.formReg.classList.remove('hidden-view'); });
-        DOM.showLog.addEventListener('click', (e) => { e.preventDefault(); DOM.formReg.classList.add('hidden-view'); DOM.formLogin.classList.remove('hidden-view'); });
-
-        DOM.formLogin.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            try { 
-                await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value); 
-            } catch (err) { 
-                let msg = "Error al iniciar sesión.";
-                if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') msg = "Credenciales incorrectas.";
-                if (err.code === 'auth/invalid-email') msg = "El correo no es válido.";
-                showToast(msg, "error"); 
-            }
-            finally { btn.disabled = false; btn.innerHTML = 'Iniciar Sesión'; }
-        });
-
-        DOM.formReg.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const pass = document.getElementById('register-password').value;
-            if(pass.length < 6) return showToast("La contraseña debe tener al menos 6 caracteres", "error");
-            
-            const btn = e.target.querySelector('button'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, document.getElementById('register-email').value, pass);
-                await setDoc(doc(db, 'artifacts', appId, 'users', cred.user.uid, 'profile', 'settings'), { isPremium: false, createdAt: serverTimestamp() });
-            } catch (err) { 
-                let msg = "Error al registrar la cuenta.";
-                if (err.code === 'auth/email-already-in-use') msg = "Este correo ya está registrado.";
-                else if (err.code === 'auth/weak-password') msg = "La contraseña es muy débil (mínimo 6 caracteres).";
-                else if (err.code === 'auth/invalid-email') msg = "El formato del correo es inválido.";
-                showToast(msg, "error"); 
-            }
-            finally { btn.disabled = false; btn.innerHTML = 'Crear Cuenta'; }
-        });
-
-        DOM.btnLogout.addEventListener('click', () => signOut(auth));
-
-        // --- Database & Dashboard Logic ---
-        function loadUserData() {
-            const uid = state.user.uid;
-            
-            // Listen to Premium Status
-            state.unsubProfile = onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), (docSnap) => {
-                state.isPremium = docSnap.exists() ? docSnap.data().isPremium : false;
+                state.user = null; state.isPremium = false;
+                if(state.unsubLinks) state.unsubLinks(); if(state.unsubProfile) state.unsubProfile();
                 updateNav();
-                applyPaywallState();
-            });
+                if(!document.getElementById('view-dashboard').classList.contains('hidden-view')) switchView('free');
+            }
+        });
 
-            // Listen to Links
-            state.unsubLinks = onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'links'), (snap) => {
-                state.links = [];
-                snap.forEach(d => state.links.push({ id: d.id, ...d.data() }));
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) signInWithCustomToken(auth, __initial_auth_token).catch(()=>{});
+
+        document.getElementById('show-register').onclick = (e) => { e.preventDefault(); document.getElementById('login-form').classList.add('hidden-view'); document.getElementById('register-form').classList.remove('hidden-view'); };
+        document.getElementById('show-login').onclick = (e) => { e.preventDefault(); document.getElementById('register-form').classList.add('hidden-view'); document.getElementById('login-form').classList.remove('hidden-view'); };
+
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            try { await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value); }
+            catch(e) { showToast("msg_err", "error"); }
+        };
+        document.getElementById('register-form').onsubmit = async (e) => {
+            e.preventDefault();
+            try { 
+                const c = await createUserWithEmailAndPassword(auth, document.getElementById('register-email').value, document.getElementById('register-password').value);
+                await setDoc(doc(db, 'artifacts', appId, 'users', c.user.uid, 'profile', 'settings'), { isPremium: false, createdAt: serverTimestamp() });
+            } catch(e) { showToast("msg_err", "error"); }
+        };
+        document.getElementById('btn-logout').onclick = () => signOut(auth);
+
+        // Dashboard
+        function loadUserData() {
+            state.unsubProfile = onSnapshot(doc(db, 'artifacts', appId, 'users', state.user.uid, 'profile', 'settings'), (d) => {
+                state.isPremium = d.exists() ? d.data().isPremium : false;
+                updateNav();
+                if (state.isPremium) { document.getElementById('dashboard-paywall').classList.add('hidden-view'); document.getElementById('dashboard-content').classList.remove('blur-sm', 'pointer-events-none'); }
+                else { document.getElementById('dashboard-paywall').classList.remove('hidden-view'); document.getElementById('dashboard-content').classList.add('blur-sm', 'pointer-events-none'); }
+            });
+            state.unsubLinks = onSnapshot(collection(db, 'artifacts', appId, 'users', state.user.uid, 'links'), (snap) => {
+                state.links = []; snap.forEach(d => state.links.push({ id: d.id, ...d.data() }));
                 state.links.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
                 renderDashboard();
-            }, (e) => { if(state.user) console.error(e); });
+            });
         }
 
-        function applyPaywallState() {
-            if (state.isPremium) {
-                DOM.dashPaywall.classList.add('hidden-view');
-                DOM.dashContent.classList.remove('blur-md', 'pointer-events-none', 'opacity-60');
-            } else {
-                DOM.dashPaywall.classList.remove('hidden-view');
-                DOM.dashContent.classList.add('blur-md', 'pointer-events-none', 'opacity-60');
-            }
-        }
-
-        // Pro Generator
-        DOM.formPro.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!state.user || !state.isPremium) return;
-
-            const btn = e.target.querySelector('button'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        document.getElementById('form-pro-link').onsubmit = async (e) => {
+            e.preventDefault(); if (!state.user || !state.isPremium) return;
+            const code = document.getElementById('pro-input-code').value;
+            const phone = document.getElementById('pro-input-phone').value.trim();
+            const msg = document.getElementById('pro-input-msg').value.trim();
+            const camp = document.getElementById('pro-input-utm-c').value.trim();
+            const source = document.getElementById('pro-input-utm-s').value.trim();
+            const medium = document.getElementById('pro-input-utm-m').value.trim();
             
-            const code = DOM.proCountry.value;
-            const phone = DOM.proPhone.value.trim().replace(/\D/g, '');
-            const msg = DOM.proMsg.value.trim();
-            const camp = DOM.proUtmC.value.trim();
-            const source = DOM.proUtmS.value.trim();
-            const medium = DOM.proUtmM.value.trim();
-            const fullPhone = `${code}${phone}`;
-
             let qParams = [];
             if(msg) qParams.push(`text=${encodeURIComponent(msg)}`);
             if(camp) qParams.push(`utm_campaign=${encodeURIComponent(camp)}`);
             if(source) qParams.push(`utm_source=${encodeURIComponent(source)}`);
             if(medium) qParams.push(`utm_medium=${encodeURIComponent(medium)}`);
-
-            const url = qParams.length > 0 ? `https://wa.me/${fullPhone}?${qParams.join('&')}` : `https://wa.me/${fullPhone}`;
+            const url = qParams.length > 0 ? `https://wa.me/${code}${phone}?${qParams.join('&')}` : `https://wa.me/${code}${phone}`;
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'users', state.user.uid, 'links'), {
-                    phone, url, utm_campaign: camp, utm_source: source, utm_medium: medium,
-                    clicks: Math.floor(Math.random() * 50) + 1, // Mock clicks for dashboard demo
-                    createdAt: serverTimestamp()
+                    phone, url, utm_campaign: camp, utm_source: source, utm_medium: medium, clicks: Math.floor(Math.random()*50), createdAt: serverTimestamp()
                 });
-                DOM.proLink.textContent = url; DOM.proLink.href = url;
-                DOM.proResult.classList.remove('hidden-view');
-                showToast("Enlace PRO guardado", "success");
-                DOM.formPro.reset();
-            } catch(err) { showToast("Error al guardar", "error"); }
-            finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Generar y Guardar Enlace'; }
-        });
+                document.getElementById('pro-generated-link').textContent = url; document.getElementById('pro-generated-link').href = url;
+                document.getElementById('pro-result-area').classList.remove('hidden-view');
+                e.target.reset();
+            } catch(e) {}
+        };
 
         function renderDashboard() {
-            DOM.statLinks.textContent = state.links.length;
-            let clicks = 0, sources = {};
-            
-            DOM.tableBody.innerHTML = '';
-            if (state.links.length === 0) DOM.emptyState.classList.remove('hidden-view');
-            else DOM.emptyState.classList.add('hidden-view');
+            document.getElementById('stat-links').textContent = state.links.length;
+            let clicks = 0, sources = {}, tbody = document.getElementById('links-table-body');
+            tbody.innerHTML = '';
+            if (state.links.length === 0) document.getElementById('empty-state').classList.remove('hidden-view');
+            else document.getElementById('empty-state').classList.add('hidden-view');
 
             state.links.forEach(l => {
-                const c = l.clicks || 0; clicks += c;
-                const src = l.utm_source || 'direct';
-                sources[src] = (sources[src] || 0) + c;
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-white/5 group';
-                tr.innerHTML = `
-                    <td class="px-6 py-4"><div class="font-medium text-white">${l.utm_campaign || 'N/A'}</div><div class="text-xs text-gray-500 font-mono truncate max-w-[200px]">${l.url}</div></td>
-                    <td class="px-6 py-4 text-xs"><span class="text-gray-500">src:</span> ${l.utm_source || '-'}<br><span class="text-gray-500">med:</span> ${l.utm_medium || '-'}</td>
-                    <td class="px-6 py-4 text-center font-semibold text-brand-400">${c}</td>
-                    <td class="px-6 py-4 text-right"><button onclick="deleteLink('${l.id}')" class="text-gray-500 hover:text-red-400"><i class="fas fa-trash-alt"></i></button></td>
-                `;
-                DOM.tableBody.appendChild(tr);
+                const c = l.clicks || 0; clicks += c; const src = l.utm_source || 'direct'; sources[src] = (sources[src] || 0) + c;
+                const tr = document.createElement('tr'); tr.className = 'hover:bg-white/5 group';
+                tr.innerHTML = `<td class="px-6 py-4"><div class="font-medium text-white">${l.utm_campaign || '-'}</div><div class="text-xs text-gray-500 font-mono truncate max-w-[200px]">${l.url}</div></td>
+                                <td class="px-6 py-4 text-xs"><span class="text-gray-500">s:</span> ${l.utm_source || '-'}<br><span class="text-gray-500">m:</span> ${l.utm_medium || '-'}</td>
+                                <td class="px-6 py-4 text-center font-semibold text-brand-400">${c}</td>
+                                <td class="px-6 py-4 text-right"><button onclick="deleteLink('${l.id}')" class="text-gray-500 hover:text-red-400"><i class="fas fa-trash-alt"></i></button></td>`;
+                tbody.appendChild(tr);
             });
-
-            DOM.statClicks.textContent = clicks;
-            let bestSrc = "N/A", maxC = -1;
-            for(let s in sources) if(sources[s] > maxC) { maxC = sources[s]; bestSrc = s; }
-            DOM.statSource.textContent = maxC > 0 ? bestSrc : "N/A";
+            document.getElementById('stat-clicks').textContent = clicks;
+            let bestSrc = "N/A", maxC = -1; for(let s in sources) if(sources[s] > maxC) { maxC = sources[s]; bestSrc = s; }
+            document.getElementById('stat-source').textContent = maxC > 0 ? bestSrc : "N/A";
         }
 
-        window.deleteLink = async function(id) {
-            if(!state.user || !state.isPremium) return;
-            try { await deleteDoc(doc(db, 'artifacts', appId, 'users', state.user.uid, 'links', id)); showToast("Eliminado", "info"); } 
-            catch(e) { showToast("Error", "error"); }
-        };
+        window.deleteLink = async (id) => { if(state.user && state.isPremium) await deleteDoc(doc(db, 'artifacts', appId, 'users', state.user.uid, 'links', id)); };
+        window.triggerMockPayment = async () => { if(state.user) await setDoc(doc(db, 'artifacts', appId, 'users', state.user.uid, 'profile', 'settings'), { isPremium: true }, { merge: true }); };
 
-        // Mock Payment
-        window.triggerMockPayment = function() {
-            if(!state.user) return;
-            DOM.payModal.classList.remove('hidden-view');
-            setTimeout(async () => {
-                try {
-                    await setDoc(doc(db, 'artifacts', appId, 'users', state.user.uid, 'profile', 'settings'), { isPremium: true }, { merge: true });
-                    showToast("¡Suscripción PRO Activada!", "success");
-                } catch(e) { showToast("Error", "error"); }
-                finally { DOM.payModal.classList.add('hidden-view'); }
-            }, 2000);
-        };
-
-        // Export CSV
-        DOM.btnCsv.addEventListener('click', () => {
-            if(!state.isPremium || state.links.length === 0) return showToast("No hay datos", "error");
+        document.getElementById('btn-export-csv').onclick = () => {
+            if(!state.isPremium || !state.links.length) return;
             const rows = [['Campaña', 'URL', 'Source', 'Medium', 'Clics']];
             state.links.forEach(l => rows.push([l.utm_campaign||'', l.url, l.utm_source||'', l.utm_medium||'', l.clicks||0].map(v => `"${v}"`).join(',')));
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' }));
-            a.download = `walink_pro_${Date.now()}.csv`;
-            a.click();
-        });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' })); a.download = 'walink_pro.csv'; a.click();
+        };
 
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => { switchView('free'); initAuth(); });
+        // Init
+        window.addEventListener('DOMContentLoaded', () => {
+            setupCustomSelect('free');
+            setupCustomSelect('pro');
+            applyTranslations();
+            switchView('free');
+        });
     </script>
 </body>
 </html>
