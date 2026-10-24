@@ -712,6 +712,45 @@
 
         // Init
         window.addEventListener('DOMContentLoaded', () => {
+            // === 🚀 MOTOR DE REDIRECCIÓN Y TRACKING REAL ===
+            const urlParams = new URLSearchParams(window.location.search);
+            const aliasToRedirect = urlParams.get('l');
+            
+            if (aliasToRedirect) {
+                // Mostrar pantalla de redirección
+                document.body.innerHTML = '<div style="height:100vh;display:flex;align-items:center;justify-content:center;color:#10b981;font-family:sans-serif;font-weight:bold;background:#0f172a;flex-direction:column;"><svg style="animation: spin 1s linear infinite; height: 40px; width: 40px; margin-bottom:15px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Redirigiendo al chat seguro...</div>';
+                
+                // Buscar el alias en la base de datos pública
+                let publicLinks = JSON.parse(localStorage.getItem('wlp_public_links') || '{}');
+                let linkData = publicLinks[aliasToRedirect];
+                
+                if (linkData) {
+                    // SUMAR 1 CLIC REAL
+                    linkData.clicks = (linkData.clicks || 0) + 1;
+                    publicLinks[aliasToRedirect] = linkData;
+                    localStorage.setItem('wlp_public_links', JSON.stringify(publicLinks));
+                    
+                    // Sincronizar el clic con el Dashboard del creador del link
+                    let ownerLinks = JSON.parse(localStorage.getItem(`wlp_links_${linkData.ownerUid}`) || '[]');
+                    let targetLink = ownerLinks.find(l => l.alias === aliasToRedirect);
+                    if(targetLink) {
+                        targetLink.clicks = linkData.clicks;
+                        localStorage.setItem(`wlp_links_${linkData.ownerUid}`, JSON.stringify(ownerLinks));
+                    }
+                    
+                    // Ejecutar la redirección final a WhatsApp
+                    window.location.href = linkData.originalUrl;
+                } else {
+                    alert("⚠️ Este enlace personalizado ya no existe o está inactivo.");
+                    window.location.href = window.location.origin + window.location.pathname;
+                }
+                return; // Detenemos la carga de la app completa, ya nos fuimos.
+            }
+
+            // Configurar el UI del prefijo de enlace con el host real
+            const prefixEl = document.getElementById('domain-prefix');
+            if(prefixEl) prefixEl.textContent = window.location.host + '/?l=';
+
             setupCustomSelect('free');
             setupCustomSelect('pro');
             applyTranslations();
