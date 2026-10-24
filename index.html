@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaLink Pro - Generador Avanzado</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                        glassBorder: 'rgba(255, 255, 255, 0.1)',
+                        brand: {
+                            500: '#10b981', // WhatsApp Green
+                            600: '#059669',
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Gradients */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+        }
+        
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            border-radius: 50%;
+            animation: pulse-slow 8s infinite alternate;
+        }
+
+        .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(16, 185, 129, 0.2); }
+        .shape-2 { bottom: -20%; right: -10%; width: 600px; height: 600px; background: rgba(59, 130, 246, 0.15); }
+        .shape-3 { top: 40%; left: 50%; width: 400px; height: 400px; background: rgba(139, 92, 246, 0.15); transform: translate(-50%, -50%); }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-input {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-input:focus {
+            outline: none;
+            border-color: #10b981;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        /* Hide elements */
+        .hidden-view { display: none !important; }
+        
+        /* Toast Notification */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 250px;
+            padding: 16px;
+            border-radius: 12px;
+            color: white;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast-success { background: linear-gradient(to right, #059669, #10b981); }
+        .toast-error { background: linear-gradient(to right, #dc2626, #ef4444); }
+        .toast-info { background: linear-gradient(to right, #2563eb, #3b82f6); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Background Elements -->
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app" class="flex-grow flex flex-col relative z-10 w-full">
+
+        <!-- LOADING OVERLAY -->
+        <div id="global-loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/90 backdrop-blur-md">
+            <i class="fas fa-circle-notch fa-spin text-5xl text-brand-500 mb-4"></i>
+            <h2 class="text-xl font-semibold tracking-wider">Iniciando WaLink Pro...</h2>
+        </div>
+
+        <!-- AUTHENTICATION VIEW -->
+        <div id="auth-view" class="hidden-view min-h-screen flex items-center justify-center p-4">
+            <div class="glass-panel w-full max-w-md p-8 rounded-3xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-blue-500"></div>
+                
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-500/20 text-brand-500 mb-4">
+                        <i class="fab fa-whatsapp text-3xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold">WaLink Pro</h1>
+                    <p class="text-sm text-gray-400 mt-2">Generador Avanzado y Tracker UTM</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
+                        <input type="email" id="login-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="tu@empresa.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+                        <input type="password" id="login-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl transition-colors mt-6 shadow-lg shadow-brand-500/30">
+                        Iniciar Sesión
+                    </button>
+                    <p class="text-center text-sm text-gray-400 mt-4">
+                        ¿No tienes cuenta? <a href="#" id="show-register" class="text-brand-400 hover:text-brand-300 transition">Regístrate</a>
+                    </p>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="space-y-4 hidden-view">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico</label>
+                        <input type="email" id="register-email" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="tu@empresa.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+                        <input type="password" id="register-password" required class="w-full glass-input px-4 py-3 rounded-xl text-sm" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-colors mt-6 shadow-lg shadow-blue-500/30">
+                        Crear Cuenta
+                    </button>
+                    <p class="text-center text-sm text-gray-400 mt-4">
+                        ¿Ya tienes cuenta? <a href="#" id="show-login" class="text-blue-400 hover:text-blue-300 transition">Inicia Sesión</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- DASHBOARD APP VIEW -->
+        <div id="dashboard-view" class="hidden-view flex-grow flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            
+            <!-- Navbar -->
+            <nav class="glass-panel rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center shadow-lg">
+                        <i class="fab fa-whatsapp text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight">WaLink Pro</h1>
+                        <span id="user-tier-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">Free Tier</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 bg-black/20 p-1 rounded-xl">
+                    <button id="tab-generator" class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white/10 text-white shadow">Generador</button>
+                    <button id="tab-dashboard" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white">Dashboard</button>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span id="user-email-display" class="text-sm text-gray-400 hidden sm:block"></span>
+                    <button id="btn-logout" class="text-gray-400 hover:text-red-400 transition" title="Cerrar Sesión">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- MAIN CONTENT AREA -->
+            <div class="flex-grow flex flex-col gap-6">
+
+                <!-- SECTION: GENERATOR -->
+                <section id="section-generator" class="w-full max-w-3xl mx-auto animation-fade-in">
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-brand-500/20 rounded-full blur-2xl"></div>
+                        
+                        <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+                            <i class="fas fa-link text-brand-400"></i> Nuevo Enlace
+                        </h2>
+                        <p class="text-gray-400 text-sm mb-6">Crea un enlace con mensaje pre-llenado y añade parámetros UTM ocultos para trackear la fuente del tráfico en tu dashboard.</p>
+
+                        <form id="form-generate-link" class="space-y-5">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <!-- Phone -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">
+                                        Número de Teléfono <span class="text-brand-400">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-phone text-gray-500"></i>
+                                        </div>
+                                        <input type="tel" id="input-phone" required class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="Ej: 50761234567" pattern="[0-9]{8,15}">
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Incluye el código de país sin el '+'</p>
+                                </div>
+                                
+                                <!-- Campaign -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">
+                                        Nombre de Campaña (UTM_Campaign)
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-bullhorn text-gray-500"></i>
+                                        </div>
+                                        <input type="text" id="input-utm-campaign" class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="Ej: promo_verano">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Message -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">
+                                    Mensaje Pre-llenado
+                                </label>
+                                <textarea id="input-message" rows="3" class="w-full glass-input px-4 py-3 rounded-xl text-sm resize-none" placeholder="Hola, estoy interesado en sus servicios..."></textarea>
+                            </div>
+
+                            <!-- Advanced UTMs -->
+                            <div class="bg-black/20 p-4 rounded-xl border border-white/5 space-y-4">
+                                <h3 class="text-sm font-semibold text-gray-300 flex items-center gap-2">
+                                    <i class="fas fa-cogs text-gray-500"></i> Parámetros UTM Avanzados
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">Fuente (UTM_Source)</label>
+                                        <input type="text" id="input-utm-source" class="w-full glass-input px-3 py-2 rounded-lg text-sm" placeholder="Ej: facebook, instagram">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">Medio (UTM_Medium)</label>
+                                        <input type="text" id="input-utm-medium" class="w-full glass-input px-3 py-2 rounded-lg text-sm" placeholder="Ej: cpc, social, email">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-brand-400 hover:from-brand-500 hover:to-brand-300 text-white font-bold py-3.5 rounded-xl transition-all transform hover:scale-[1.01] shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2">
+                                <i class="fas fa-magic"></i> Generar Enlace Trackeable
+                            </button>
+                        </form>
+
+                        <!-- Result Area -->
+                        <div id="result-area" class="mt-6 hidden-view">
+                            <div class="border border-brand-500/30 bg-brand-900/20 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div class="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                                    <p class="text-xs text-brand-400 mb-1">Enlace Generado:</p>
+                                    <a href="#" id="generated-link-display" target="_blank" class="text-white text-sm font-mono break-all hover:underline"></a>
+                                </div>
+                                <button id="btn-copy" class="shrink-0 bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
+                                    <i class="far fa-copy"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- SECTION: DASHBOARD -->
+                <section id="section-dashboard" class="w-full hidden-view animation-fade-in relative flex flex-col gap-6">
+                    
+                    <!-- Stats Grid & Paywall Container -->
+                    <div class="relative w-full rounded-3xl overflow-hidden">
+                        
+                        <!-- PAYWALL OVERLAY (Hidden if Premium) -->
+                        <div id="paywall-overlay" class="absolute inset-0 z-20 glass-panel bg-gray-900/60 flex flex-col items-center justify-center p-6 text-center backdrop-blur-xl">
+                            <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-yellow-500/20 rotate-12">
+                                <i class="fas fa-lock text-3xl text-white -rotate-12"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Desbloquea Analíticas Avanzadas</h3>
+                            <p class="text-gray-300 max-w-md mb-6">Obtén métricas de clics en tiempo real, rendimiento por fuente UTM y exportación de reportes detallados en CSV.</p>
+                            
+                            <div class="bg-black/40 p-4 rounded-xl mb-6 border border-white/10 flex items-center gap-4">
+                                <div class="text-left">
+                                    <p class="text-sm text-gray-400 uppercase tracking-wide">Suscripción Pro</p>
+                                    <p class="text-3xl font-bold">$3<span class="text-lg text-gray-500 font-normal">/mes</span></p>
+                                </div>
+                            </div>
+
+                            <button onclick="triggerMockPayment()" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-3 px-8 rounded-xl transition-all transform hover:scale-105 shadow-xl shadow-orange-500/30 flex items-center gap-2">
+                                <i class="fas fa-credit-card"></i> Actualizar a PRO Ahora
+                            </button>
+                            <p class="text-xs text-gray-500 mt-4"><i class="fas fa-shield-alt"></i> Pago 100% seguro. Cancela cuando quieras.</p>
+                        </div>
+
+                        <!-- STATS CONTENT (Blurred if not premium) -->
+                        <div id="stats-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-1">
+                            <div class="glass-panel p-5 rounded-2xl">
+                                <p class="text-sm text-gray-400 mb-1">Total Enlaces</p>
+                                <h4 id="stat-links" class="text-3xl font-bold text-white">0</h4>
+                            </div>
+                            <div class="glass-panel p-5 rounded-2xl relative overflow-hidden">
+                                <div class="absolute right-0 bottom-0 opacity-10 text-6xl -mr-4 -mb-4"><i class="fas fa-mouse-pointer"></i></div>
+                                <p class="text-sm text-gray-400 mb-1">Clics Totales</p>
+                                <h4 id="stat-clicks" class="text-3xl font-bold text-brand-400">0</h4>
+                            </div>
+                            <div class="glass-panel p-5 rounded-2xl">
+                                <p class="text-sm text-gray-400 mb-1">Mejor Fuente</p>
+                                <h4 id="stat-source" class="text-xl font-bold text-white capitalize truncate">N/A</h4>
+                            </div>
+                            <div class="glass-panel p-5 rounded-2xl flex flex-col justify-center">
+                                <button id="btn-export-csv" class="w-full bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 text-blue-300 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-file-csv"></i> Exportar CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- List of Links -->
+                    <div class="glass-panel rounded-3xl overflow-hidden flex flex-col">
+                        <div class="p-6 border-b border-white/10 flex justify-between items-center">
+                            <h3 class="text-lg font-bold">Tus Enlaces Generados</h3>
+                            <span class="bg-brand-500/20 text-brand-400 text-xs px-2 py-1 rounded-md" id="link-count-badge">0 enlaces</span>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-300">
+                                <thead class="bg-black/20 text-xs uppercase text-gray-400">
+                                    <tr>
+                                        <th class="px-6 py-4 font-semibold">Campaña / Destino</th>
+                                        <th class="px-6 py-4 font-semibold">UTMs</th>
+                                        <th class="px-6 py-4 font-semibold">Clics</th>
+                                        <th class="px-6 py-4 font-semibold">Fecha</th>
+                                        <th class="px-6 py-4 font-semibold text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="links-table-body" class="divide-y divide-white/5">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                            <div id="empty-state" class="hidden-view p-8 text-center text-gray-500 flex flex-col items-center">
+                                <i class="fas fa-inbox text-4xl mb-3 opacity-50"></i>
+                                <p>Aún no has generado ningún enlace.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+            </div>
+        </div>
+
+        <!-- Payment Processing Modal -->
+        <div id="payment-modal" class="hidden-view fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div class="glass-panel p-8 rounded-3xl w-full max-w-sm text-center flex flex-col items-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent"></div>
+                <div class="relative z-10 w-full flex flex-col items-center">
+                    <i class="fas fa-circle-notch fa-spin text-5xl text-orange-400 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Procesando Pago...</h3>
+                    <p class="text-sm text-gray-400">Por favor no cierres esta ventana.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, addDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Variables configuration
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'walink-pro-default';
+        let firebaseConfig;
+        
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                // Mock config for local testing if __firebase_config is missing to prevent crash
+                apiKey: "mock-key", authDomain: "mock.firebaseapp.com", projectId: "mock-project"
+            };
+        } catch(e) {
+            console.error("Error parsing firebase config", e);
+            showToast("Error de configuración de servidor.", "error");
+        }
+
+        // State Management
+        const state = {
+            user: null,
+            isPremium: false,
+            links: [],
+            unsubscribeLinks: null,
+            unsubscribeProfile: null
+        };
+
+        // Initialize Firebase
+        let app, db, auth;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (e) {
+            console.error("Firebase init error", e);
+        }
+
+        // DOM Elements
+        const DOM = {
+            loader: document.getElementById('global-loader'),
+            authView: document.getElementById('auth-view'),
+            dashboardView: document.getElementById('dashboard-view'),
+            loginForm: document.getElementById('login-form'),
+            registerForm: document.getElementById('register-form'),
+            showRegister: document.getElementById('show-register'),
+            showLogin: document.getElementById('show-login'),
+            btnLogout: document.getElementById('btn-logout'),
+            userEmailDisplay: document.getElementById('user-email-display'),
+            tierBadge: document.getElementById('user-tier-badge'),
+            
+            tabGen: document.getElementById('tab-generator'),
+            tabDash: document.getElementById('tab-dashboard'),
+            secGen: document.getElementById('section-generator'),
+            secDash: document.getElementById('section-dashboard'),
+            
+            formGenLink: document.getElementById('form-generate-link'),
+            inputPhone: document.getElementById('input-phone'),
+            inputMsg: document.getElementById('input-message'),
+            inputUtmC: document.getElementById('input-utm-campaign'),
+            inputUtmS: document.getElementById('input-utm-source'),
+            inputUtmM: document.getElementById('input-utm-medium'),
+            
+            resultArea: document.getElementById('result-area'),
+            generatedLink: document.getElementById('generated-link-display'),
+            btnCopy: document.getElementById('btn-copy'),
+            
+            paywall: document.getElementById('paywall-overlay'),
+            statsContent: document.getElementById('stats-content'),
+            statLinks: document.getElementById('stat-links'),
+            statClicks: document.getElementById('stat-clicks'),
+            statSource: document.getElementById('stat-source'),
+            btnExportCsv: document.getElementById('btn-export-csv'),
+            
+            linksTableBody: document.getElementById('links-table-body'),
+            emptyState: document.getElementById('empty-state'),
+            linkCountBadge: document.getElementById('link-count-badge'),
+            paymentModal: document.getElementById('payment-modal')
+        };
+
+        // --- UI Utilities ---
+        window.showToast = function(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = 'fa-info-circle';
+            if(type === 'success') icon = 'fa-check-circle';
+            if(type === 'error') icon = 'fa-exclamation-circle';
+
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `<i class="fas ${icon} text-xl"></i> <div><p class="text-sm font-medium">${message}</p></div>`;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Remove
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        function switchTab(tabId) {
+            if (tabId === 'generator') {
+                DOM.tabGen.classList.replace('bg-transparent', 'bg-white/10');
+                DOM.tabGen.classList.replace('text-gray-400', 'text-white');
+                DOM.tabGen.classList.add('shadow');
+                
+                DOM.tabDash.classList.replace('bg-white/10', 'bg-transparent');
+                DOM.tabDash.classList.replace('text-white', 'text-gray-400');
+                DOM.tabDash.classList.remove('shadow');
+
+                DOM.secGen.classList.remove('hidden-view');
+                DOM.secDash.classList.add('hidden-view');
+            } else {
+                DOM.tabDash.classList.replace('bg-transparent', 'bg-white/10');
+                DOM.tabDash.classList.replace('text-gray-400', 'text-white');
+                DOM.tabDash.classList.add('shadow');
+                
+                DOM.tabGen.classList.replace('bg-white/10', 'bg-transparent');
+                DOM.tabGen.classList.replace('text-white', 'text-gray-400');
+                DOM.tabGen.classList.remove('shadow');
+
+                DOM.secDash.classList.remove('hidden-view');
+                DOM.secGen.classList.add('hidden-view');
+            }
+        }
+
+        // --- AUTH LOGIC ---
+        async function initializeAuth() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    state.user = user;
+                    DOM.userEmailDisplay.textContent = user.email || 'Anónimo';
+                    showAppView();
+                    loadUserData();
+                } else {
+                    state.user = null;
+                    clearData();
+                    showAuthView();
+                }
+                DOM.loader.classList.add('hidden-view');
+            });
+
+            // Handle Immersive Initial Token if provided by platform
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                try {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } catch (error) {
+                    console.error("Custom token login failed", error);
+                }
+            }
+        }
+
+        function showAuthView() {
+            DOM.authView.classList.remove('hidden-view');
+            DOM.dashboardView.classList.add('hidden-view');
+        }
+
+        function showAppView() {
+            DOM.authView.classList.add('hidden-view');
+            DOM.dashboardView.classList.remove('hidden-view');
+            switchTab('generator');
+        }
+
+        // Auth Events
+        DOM.showRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            DOM.loginForm.classList.add('hidden-view');
+            DOM.registerForm.classList.remove('hidden-view');
+        });
+
+        DOM.showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            DOM.registerForm.classList.add('hidden-view');
+            DOM.loginForm.classList.remove('hidden-view');
+        });
+
+        DOM.loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            try {
+                const btn = e.target.querySelector('button');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+                btn.disabled = true;
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                showToast("Error al iniciar sesión. Revisa tus datos.", "error");
+                const btn = e.target.querySelector('button');
+                btn.innerHTML = 'Iniciar Sesión';
+                btn.disabled = false;
+            }
+        });
+
+        DOM.registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const pass = document.getElementById('register-password').value;
+            if(pass.length < 6) {
+                showToast("La contraseña debe tener al menos 6 caracteres", "error");
+                return;
+            }
+            try {
+                const btn = e.target.querySelector('button');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
+                btn.disabled = true;
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                // Initialize default profile
+                await setDoc(doc(db, 'artifacts', appId, 'users', userCredential.user.uid, 'profile', 'settings'), {
+                    isPremium: false,
+                    createdAt: serverTimestamp()
+                });
+            } catch (err) {
+                showToast(err.message, "error");
+                const btn = e.target.querySelector('button');
+                btn.innerHTML = 'Crear Cuenta';
+                btn.disabled = false;
+            }
+        });
+
+        DOM.btnLogout.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // --- DATABASE LOGIC ---
+        function clearData() {
+            if(state.unsubscribeLinks) state.unsubscribeLinks();
+            if(state.unsubscribeProfile) state.unsubscribeProfile();
+            state.links = [];
+            state.isPremium = false;
+        }
+
+        function loadUserData() {
+            if (!state.user) return;
+            const uid = state.user.uid;
+
+            // Load Profile (Premium Status)
+            const profileRef = doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings');
+            state.unsubscribeProfile = onSnapshot(profileRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    state.isPremium = docSnap.data().isPremium === true;
+                } else {
+                    state.isPremium = false;
+                }
+                updateTierUI();
+            }, (err) => console.error("Profile listen error", err));
+
+            // Load Links
+            const linksRef = collection(db, 'artifacts', appId, 'users', uid, 'links');
+            // Note: Following RULE 2, no complex queries, just fetch all and sort in memory
+            state.unsubscribeLinks = onSnapshot(linksRef, (snapshot) => {
+                state.links = [];
+                snapshot.forEach(doc => {
+                    state.links.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort descending by date in memory
+                state.links.sort((a, b) => {
+                    const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+                    const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+                    return timeB - timeA;
+                });
+
+                renderDashboard();
+            }, (err) => {
+                console.error("Links listen error", err);
+                showToast("Error al cargar los enlaces", "error");
+            });
+        }
+
+        // --- APP LOGIC ---
+        DOM.tabGen.addEventListener('click', () => switchTab('generator'));
+        DOM.tabDash.addEventListener('click', () => switchTab('dashboard'));
+
+        DOM.formGenLink.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!state.user) return;
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+            btn.disabled = true;
+
+            const phone = DOM.inputPhone.value.trim().replace(/\D/g, ''); // Extract only numbers
+            const msg = DOM.inputMsg.value.trim();
+            const camp = DOM.inputUtmC.value.trim();
+            const source = DOM.inputUtmS.value.trim();
+            const medium = DOM.inputUtmM.value.trim();
+
+            // Construct URL
+            let baseUrl = `https://wa.me/${phone}`;
+            let finalMsg = msg;
+            
+            // Append UTMs conceptually to the message if user wants, or as url params 
+            // Standard wa.me ignores unknown params for routing, but we can append them 
+            // for sharing purposes and local tracking.
+            let queryParams = [];
+            if(finalMsg) queryParams.push(`text=${encodeURIComponent(finalMsg)}`);
+            if(camp) queryParams.push(`utm_campaign=${encodeURIComponent(camp)}`);
+            if(source) queryParams.push(`utm_source=${encodeURIComponent(source)}`);
+            if(medium) queryParams.push(`utm_medium=${encodeURIComponent(medium)}`);
+
+            const fullUrl = queryParams.length > 0 ? `${baseUrl}?${queryParams.join('&')}` : baseUrl;
+
+            // Save to DB
+            try {
+                const linksRef = collection(db, 'artifacts', appId, 'users', state.user.uid, 'links');
+                // Simulate some random mock clicks for the dashboard demo effect
+                const mockClicks = Math.floor(Math.random() * 80) + 1;
+                
+                await addDoc(linksRef, {
+                    phone,
+                    originalMessage: msg,
+                    url: fullUrl,
+                    utm_campaign: camp || 'N/A',
+                    utm_source: source || 'direct',
+                    utm_medium: medium || 'none',
+                    clicks: mockClicks,
+                    createdAt: serverTimestamp()
+                });
+
+                showToast("Enlace generado y guardado", "success");
+                
+                // Show Result
+                DOM.generatedLink.textContent = fullUrl;
+                DOM.generatedLink.href = fullUrl;
+                DOM.resultArea.classList.remove('hidden-view');
+                
+                // Reset form optionally: DOM.formGenLink.reset();
+
+            } catch (err) {
+                console.error(err);
+                showToast("Error al guardar enlace", "error");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-magic"></i> Generar Enlace Trackeable';
+                btn.disabled = false;
+            }
+        });
+
+        DOM.btnCopy.addEventListener('click', () => {
+            const url = DOM.generatedLink.textContent;
+            if(!url) return;
+
+            // Fallback for iframe environments
+            const textArea = document.createElement("textarea");
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Enlace copiado al portapapeles", "success");
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showToast("Error al copiar", "error");
+            }
+            document.body.removeChild(textArea);
+        });
+
+        // --- DASHBOARD RENDERING ---
+        function updateTierUI() {
+            if (state.isPremium) {
+                DOM.tierBadge.textContent = "PRO Tier";
+                DOM.tierBadge.classList.replace('bg-gray-700', 'bg-gradient-to-r');
+                DOM.tierBadge.classList.add('from-orange-500', 'to-yellow-500', 'text-white');
+                DOM.paywall.classList.add('hidden-view');
+                DOM.statsContent.classList.remove('blur-sm', 'pointer-events-none');
+            } else {
+                DOM.tierBadge.textContent = "Free Tier";
+                DOM.tierBadge.className = "text-xs font-medium px-2 py-0.5 rounded-full bg-gray-700 text-gray-300";
+                DOM.paywall.classList.remove('hidden-view');
+                DOM.statsContent.classList.add('blur-sm', 'pointer-events-none');
+            }
+        }
+
+        function renderDashboard() {
+            // Calculate Stats
+            DOM.statLinks.textContent = state.links.length;
+            
+            let totalClicks = 0;
+            let sourcesCount = {};
+            
+            state.links.forEach(link => {
+                const clks = link.clicks || 0;
+                totalClicks += clks;
+                
+                const src = link.utm_source !== 'direct' ? link.utm_source : 'Directo';
+                if(!sourcesCount[src]) sourcesCount[src] = 0;
+                sourcesCount[src] += clks;
+            });
+            
+            DOM.statClicks.textContent = totalClicks.toLocaleString();
+            
+            let bestSource = "N/A";
+            let maxClicks = -1;
+            for(const src in sourcesCount) {
+                if(sourcesCount[src] > maxClicks) {
+                    maxClicks = sourcesCount[src];
+                    bestSource = src;
+                }
+            }
+            DOM.statSource.textContent = maxClicks > 0 ? bestSource : "N/A";
+
+            // Render Table
+            DOM.linkCountBadge.textContent = `${state.links.length} enlaces`;
+            DOM.linksTableBody.innerHTML = '';
+            
+            if (state.links.length === 0) {
+                DOM.emptyState.classList.remove('hidden-view');
+            } else {
+                DOM.emptyState.classList.add('hidden-view');
+                
+                state.links.forEach(link => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-white/5 transition-colors group';
+                    
+                    const dateObj = link.createdAt ? link.createdAt.toDate() : new Date();
+                    const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    const campDisplay = link.utm_campaign !== 'N/A' ? link.utm_campaign : `<span class="text-gray-500 italic">Sin campaña</span>`;
+                    
+                    // Only show real clicks if premium, else mask them
+                    const clicksDisplay = state.isPremium ? 
+                        `<span class="font-semibold text-brand-400">${link.clicks || 0}</span>` : 
+                        `<span class="text-gray-600 italic">***</span>`;
+
+                    tr.innerHTML = `
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-white mb-1">${campDisplay}</div>
+                            <div class="text-xs text-gray-500 font-mono break-all line-clamp-1 max-w-xs group-hover:line-clamp-none">${link.url}</div>
+                        </td>
+                        <td class="px-6 py-4 text-xs space-y-1">
+                            <div><span class="text-gray-500">src:</span> ${link.utm_source || '-'}</div>
+                            <div><span class="text-gray-500">med:</span> ${link.utm_medium || '-'}</div>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            ${clicksDisplay}
+                        </td>
+                        <td class="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
+                            ${dateStr}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="deleteLink('${link.id}')" class="text-gray-500 hover:text-red-400 transition" title="Eliminar">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    DOM.linksTableBody.appendChild(tr);
+                });
+            }
+        }
+
+        // Global function for inline onclick handler
+        window.deleteLink = async function(linkId) {
+            if(!state.user) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'users', state.user.uid, 'links', linkId));
+                showToast("Enlace eliminado", "info");
+            } catch (err) {
+                console.error(err);
+                showToast("Error al eliminar", "error");
+            }
+        };
+
+        // --- MONETIZATION MOCK ---
+        window.triggerMockPayment = function() {
+            if(!state.user) return;
+            DOM.paymentModal.classList.remove('hidden-view');
+            
+            // Simulate API delay
+            setTimeout(async () => {
+                try {
+                    const profileRef = doc(db, 'artifacts', appId, 'users', state.user.uid, 'profile', 'settings');
+                    await setDoc(profileRef, { isPremium: true }, { merge: true });
+                    
+                    DOM.paymentModal.classList.add('hidden-view');
+                    showToast("¡Pago exitoso! Bienvenido a PRO", "success");
+                    // UI will update automatically via onSnapshot on profile
+                } catch(e) {
+                    console.error(e);
+                    DOM.paymentModal.classList.add('hidden-view');
+                    showToast("Error procesando pago", "error");
+                }
+            }, 2500);
+        };
+
+        // --- CSV EXPORT ---
+        DOM.btnExportCsv.addEventListener('click', () => {
+            if(!state.isPremium) {
+                showToast("Requiere plan PRO para exportar", "error");
+                return;
+            }
+            if(state.links.length === 0) {
+                showToast("No hay datos para exportar", "info");
+                return;
+            }
+
+            const headers = ['Campaña', 'URL Destino', 'UTM Source', 'UTM Medium', 'Clics', 'Fecha Creación'];
+            const csvRows = [headers.join(',')];
+
+            state.links.forEach(l => {
+                const dateStr = l.createdAt ? l.createdAt.toDate().toISOString() : new Date().toISOString();
+                const row = [
+                    `"${l.utm_campaign || ''}"`,
+                    `"${l.url}"`,
+                    `"${l.utm_source || ''}"`,
+                    `"${l.utm_medium || ''}"`,
+                    l.clicks || 0,
+                    `"${dateStr}"`
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', `walink_report_${new Date().getTime()}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast("Reporte descargado", "success");
+        });
+
+        // Init App on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeAuth();
+        });
+    </script>
+</body>
+</html>
